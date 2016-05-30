@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="di-tech-16-on-spark" default="all">
+  
+  
+  <property file="di-tech-16.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="2000m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.swc"/>
+    <include name="*.apk"/>
+    <include name="*.zip"/>
+    <include name="*.egg"/>
+    <include name="*.ane"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.7" value="${jdk.home.1.7}/bin"/>
+  <path id="jdk.classpath.1.7">
+    <fileset dir="${jdk.home.1.7}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/ext/access-bridge-64.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jaccess.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunmscapi.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxrt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.7}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.7}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.7"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.sbt:_aopalliance:aopalliance:1.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/aopalliance/aopalliance/jars/aopalliance-1.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_asm:asm:3.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/asm/asm/jars/asm-3.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.clearspring.analytics:stream:2.7.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.clearspring.analytics/stream/jars/stream-2.7.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.esotericsoftware.kryo:kryo:2.21:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.esotericsoftware.kryo/kryo/bundles/kryo-2.21.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.esotericsoftware.minlog:minlog:1.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.esotericsoftware.minlog/minlog/jars/minlog-1.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.esotericsoftware.reflectasm:reflectasm:1.07:shaded:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.esotericsoftware.reflectasm/reflectasm/jars/reflectasm-1.07-shaded.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.fasterxml.jackson.core:jackson-annotations:2.4.4:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.fasterxml.jackson.core/jackson-annotations/bundles/jackson-annotations-2.4.4.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.fasterxml.jackson.core:jackson-core:2.4.4:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.fasterxml.jackson.core/jackson-core/bundles/jackson-core-2.4.4.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.fasterxml.jackson.core:jackson-databind:2.4.4:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.fasterxml.jackson.core/jackson-databind/bundles/jackson-databind-2.4.4.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.fasterxml.jackson.module:jackson-module-scala_2.10:2.4.4:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.fasterxml.jackson.module/jackson-module-scala_2.10/bundles/jackson-module-scala_2.10-2.4.4.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.github.fommil.netlib:core:1.1.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.github.fommil.netlib/core/jars/core-1.1.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.github.scopt:scopt_2.10:3.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.github.scopt/scopt_2.10/jars/scopt_2.10-3.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.google.code.findbugs:jsr305:1.3.9:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.google.code.findbugs/jsr305/jars/jsr305-1.3.9.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.google.guava:guava:14.0.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.google.guava/guava/bundles/guava-14.0.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.google.inject:guice:3.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.google.inject/guice/jars/guice-3.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.google.protobuf:protobuf-java:2.5.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.google.protobuf/protobuf-java/bundles/protobuf-java-2.5.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.ning:compress-lzf:1.0.3:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.ning/compress-lzf/bundles/compress-lzf-1.0.3.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.sun.jersey.contribs:jersey-guice:1.9:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.sun.jersey.contribs/jersey-guice/jars/jersey-guice-1.9.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.sun.jersey.jersey-test-framework:jersey-test-framework-grizzly2:1.9:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.sun.jersey.jersey-test-framework/jersey-test-framework-grizzly2/jars/jersey-test-framework-grizzly2-1.9.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.sun.jersey:jersey-core:1.9:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.sun.jersey/jersey-core/bundles/jersey-core-1.9.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.sun.jersey:jersey-json:1.9:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.sun.jersey/jersey-json/bundles/jersey-json-1.9.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.sun.jersey:jersey-server:1.9:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.sun.jersey/jersey-server/bundles/jersey-server-1.9.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.sun.xml.bind:jaxb-impl:2.2.3-1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.sun.xml.bind/jaxb-impl/jars/jaxb-impl-2.2.3-1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.thoughtworks.paranamer:paranamer:2.6:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.thoughtworks.paranamer/paranamer/jars/paranamer-2.6.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.twitter:chill-java:0.5.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.twitter/chill-java/jars/chill-java-0.5.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.twitter:chill_2.10:0.5.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.twitter/chill_2.10/jars/chill_2.10-0.5.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.typesafe.akka:akka-actor_2.10:2.3.11:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.typesafe.akka/akka-actor_2.10/jars/akka-actor_2.10-2.3.11.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.typesafe.akka:akka-remote_2.10:2.3.11:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.typesafe.akka/akka-remote_2.10/jars/akka-remote_2.10-2.3.11.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.typesafe.akka:akka-slf4j_2.10:2.3.11:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.typesafe.akka/akka-slf4j_2.10/jars/akka-slf4j_2.10-2.3.11.jar"/>
+  </path>
+  
+  <path id="library.sbt:_com.typesafe:config:1.2.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/com.typesafe/config/bundles/config-1.2.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_commons-beanutils:commons-beanutils-core:1.8.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/commons-beanutils/commons-beanutils-core/jars/commons-beanutils-core-1.8.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_commons-beanutils:commons-beanutils:1.7.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/commons-beanutils/commons-beanutils/jars/commons-beanutils-1.7.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_commons-cli:commons-cli:1.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/commons-cli/commons-cli/jars/commons-cli-1.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_commons-codec:commons-codec:1.5:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/commons-codec/commons-codec/jars/commons-codec-1.5.jar"/>
+  </path>
+  
+  <path id="library.sbt:_commons-collections:commons-collections:3.2.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/commons-collections/commons-collections/jars/commons-collections-3.2.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_commons-configuration:commons-configuration:1.6:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/commons-configuration/commons-configuration/jars/commons-configuration-1.6.jar"/>
+  </path>
+  
+  <path id="library.sbt:_commons-digester:commons-digester:1.8:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/commons-digester/commons-digester/jars/commons-digester-1.8.jar"/>
+  </path>
+  
+  <path id="library.sbt:_commons-httpclient:commons-httpclient:3.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/commons-httpclient/commons-httpclient/jars/commons-httpclient-3.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_commons-io:commons-io:2.4:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/commons-io/commons-io/jars/commons-io-2.4.jar"/>
+  </path>
+  
+  <path id="library.sbt:_commons-lang:commons-lang:2.5:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/commons-lang/commons-lang/jars/commons-lang-2.5.jar"/>
+  </path>
+  
+  <path id="library.sbt:_commons-net:commons-net:2.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/commons-net/commons-net/jars/commons-net-2.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_io.dropwizard.metrics:metrics-core:3.1.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/io.dropwizard.metrics/metrics-core/bundles/metrics-core-3.1.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_io.dropwizard.metrics:metrics-graphite:3.1.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/io.dropwizard.metrics/metrics-graphite/bundles/metrics-graphite-3.1.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_io.dropwizard.metrics:metrics-json:3.1.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/io.dropwizard.metrics/metrics-json/bundles/metrics-json-3.1.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_io.dropwizard.metrics:metrics-jvm:3.1.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/io.dropwizard.metrics/metrics-jvm/bundles/metrics-jvm-3.1.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_io.netty:netty-all:4.0.29.final:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/io.netty/netty-all/jars/netty-all-4.0.29.Final.jar"/>
+  </path>
+  
+  <path id="library.sbt:_io.netty:netty:3.8.0.final:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/io.netty/netty/bundles/netty-3.8.0.Final.jar"/>
+  </path>
+  
+  <path id="library.sbt:_javax.activation:activation:1.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/javax.activation/activation/jars/activation-1.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_javax.inject:javax.inject:1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/javax.inject/javax.inject/jars/javax.inject-1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_javax.xml.bind:jaxb-api:2.2.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/javax.xml.bind/jaxb-api/jars/jaxb-api-2.2.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_jline:jline:0.9.94:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/jline/jline/jars/jline-0.9.94.jar"/>
+  </path>
+  
+  <path id="library.sbt:_log4j:log4j:1.2.17:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/log4j/log4j/bundles/log4j-1.2.17.jar"/>
+  </path>
+  
+  <path id="library.sbt:_net.java.dev.jets3t:jets3t:0.7.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/net.java.dev.jets3t/jets3t/jars/jets3t-0.7.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_net.jpountz.lz4:lz4:1.3.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/net.jpountz.lz4/lz4/jars/lz4-1.3.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_net.razorvine:pyrolite:4.4:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/net.razorvine/pyrolite/jars/pyrolite-4.4.jar"/>
+  </path>
+  
+  <path id="library.sbt:_net.sf.py4j:py4j:0.8.2.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/net.sf.py4j/py4j/jars/py4j-0.8.2.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_net.sourceforge.f2j:arpack_combined_all:0.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/net.sourceforge.f2j/arpack_combined_all/jars/arpack_combined_all-0.1-javadoc.jar"/>
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/net.sourceforge.f2j/arpack_combined_all/jars/arpack_combined_all-0.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.avro:avro-ipc:1.7.7:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.avro/avro-ipc/jars/avro-ipc-1.7.7.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.avro:avro-ipc:1.7.7:tests:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.avro/avro-ipc/jars/avro-ipc-1.7.7-tests.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.avro:avro-mapred:1.7.7:hadoop2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.avro/avro-mapred/jars/avro-mapred-1.7.7-hadoop2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.avro:avro:1.7.7:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.avro/avro/jars/avro-1.7.7.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.commons:commons-compress:1.4.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.commons/commons-compress/jars/commons-compress-1.4.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.commons:commons-lang3:3.4:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.commons/commons-lang3/jars/commons-lang3-3.4.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.commons:commons-math3:3.5:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.commons/commons-math3/jars/commons-math3-3.5.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.commons:commons-math:2.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.commons/commons-math/jars/commons-math-2.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.curator:curator-client:2.4.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.curator/curator-client/bundles/curator-client-2.4.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.curator:curator-framework:2.4.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.curator/curator-framework/bundles/curator-framework-2.4.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.curator:curator-recipes:2.4.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.curator/curator-recipes/bundles/curator-recipes-2.4.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-annotations:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-annotations/jars/hadoop-annotations-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-auth:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-auth/jars/hadoop-auth-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-client:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-client/jars/hadoop-client-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-common:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-common/jars/hadoop-common-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-hdfs:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-hdfs/jars/hadoop-hdfs-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-mapreduce-client-app:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-mapreduce-client-app/jars/hadoop-mapreduce-client-app-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-mapreduce-client-common:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-mapreduce-client-common/jars/hadoop-mapreduce-client-common-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-mapreduce-client-core:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-mapreduce-client-core/jars/hadoop-mapreduce-client-core-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-mapreduce-client-jobclient:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-mapreduce-client-jobclient/jars/hadoop-mapreduce-client-jobclient-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-mapreduce-client-shuffle:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-mapreduce-client-shuffle/jars/hadoop-mapreduce-client-shuffle-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-yarn-api:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-yarn-api/jars/hadoop-yarn-api-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-yarn-client:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-yarn-client/jars/hadoop-yarn-client-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-yarn-common:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-yarn-common/jars/hadoop-yarn-common-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.hadoop:hadoop-yarn-server-common:2.2.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.hadoop/hadoop-yarn-server-common/jars/hadoop-yarn-server-common-2.2.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.ivy:ivy:2.4.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.ivy/ivy/jars/ivy-2.4.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.mesos:mesos:0.21.1:shaded-protobuf:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.mesos/mesos/jars/mesos-0.21.1-shaded-protobuf.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.parquet:parquet-column:1.7.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.parquet/parquet-column/jars/parquet-column-1.7.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.parquet:parquet-common:1.7.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.parquet/parquet-common/jars/parquet-common-1.7.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.parquet:parquet-encoding:1.7.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.parquet/parquet-encoding/jars/parquet-encoding-1.7.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.parquet:parquet-format:2.3.0-incubating:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.parquet/parquet-format/jars/parquet-format-2.3.0-incubating.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.parquet:parquet-generator:1.7.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.parquet/parquet-generator/jars/parquet-generator-1.7.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.parquet:parquet-hadoop:1.7.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.parquet/parquet-hadoop/jars/parquet-hadoop-1.7.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.parquet:parquet-jackson:1.7.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.parquet/parquet-jackson/jars/parquet-jackson-1.7.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.spark:spark-catalyst_2.10:1.5.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.spark/spark-catalyst_2.10/jars/spark-catalyst_2.10-1.5.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.spark:spark-core_2.10:1.5.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.spark/spark-core_2.10/jars/spark-core_2.10-1.5.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.spark:spark-graphx_2.10:1.5.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.spark/spark-graphx_2.10/jars/spark-graphx_2.10-1.5.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.spark:spark-launcher_2.10:1.5.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.spark/spark-launcher_2.10/jars/spark-launcher_2.10-1.5.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.spark:spark-network-common_2.10:1.5.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.spark/spark-network-common_2.10/jars/spark-network-common_2.10-1.5.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.spark:spark-network-shuffle_2.10:1.5.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.spark/spark-network-shuffle_2.10/jars/spark-network-shuffle_2.10-1.5.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.spark:spark-sql_2.10:1.5.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.spark/spark-sql_2.10/jars/spark-sql_2.10-1.5.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.spark:spark-unsafe_2.10:1.5.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.spark/spark-unsafe_2.10/jars/spark-unsafe_2.10-1.5.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.apache.zookeeper:zookeeper:3.4.5:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.apache.zookeeper/zookeeper/jars/zookeeper-3.4.5.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.codehaus.jackson:jackson-core-asl:1.9.13:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.codehaus.jackson/jackson-core-asl/jars/jackson-core-asl-1.9.13.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.codehaus.jackson:jackson-jaxrs:1.8.3:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.codehaus.jackson/jackson-jaxrs/jars/jackson-jaxrs-1.8.3.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.codehaus.jackson:jackson-mapper-asl:1.9.13:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.codehaus.jackson/jackson-mapper-asl/jars/jackson-mapper-asl-1.9.13.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.codehaus.jackson:jackson-xc:1.8.3:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.codehaus.jackson/jackson-xc/jars/jackson-xc-1.8.3.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.codehaus.janino:commons-compiler:2.7.8:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.codehaus.janino/commons-compiler/jars/commons-compiler-2.7.8.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.codehaus.janino:janino:2.7.8:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.codehaus.janino/janino/jars/janino-2.7.8.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.codehaus.jettison:jettison:1.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.codehaus.jettison/jettison/bundles/jettison-1.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.eclipse.jetty.orbit:javax.servlet:3.0.0.v201112011016:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.eclipse.jetty.orbit/javax.servlet/orbits/javax.servlet-3.0.0.v201112011016.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.json4s:json4s-ast_2.10:3.2.10:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.json4s/json4s-ast_2.10/jars/json4s-ast_2.10-3.2.10.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.json4s:json4s-core_2.10:3.2.10:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.json4s/json4s-core_2.10/jars/json4s-core_2.10-3.2.10.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.json4s:json4s-jackson_2.10:3.2.10:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.json4s/json4s-jackson_2.10/jars/json4s-jackson_2.10-3.2.10.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.mortbay.jetty:jetty-util:6.1.26:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.mortbay.jetty/jetty-util/jars/jetty-util-6.1.26.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.objenesis:objenesis:1.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.objenesis/objenesis/jars/objenesis-1.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.roaringbitmap:roaringbitmap:0.4.5:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.roaringbitmap/RoaringBitmap/bundles/RoaringBitmap-0.4.5.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.scala-lang:scala-compiler:2.10.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.scala-lang/scala-compiler/jars/scala-compiler-2.10.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.scala-lang:scala-library:2.10.4:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.sbt/boot/scala-2.10.4/lib/scala-library.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.scala-lang:scala-reflect:2.10.4:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.sbt/boot/scala-2.10.4/lib/scala-reflect.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.scala-lang:scalap:2.10.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.scala-lang/scalap/jars/scalap-2.10.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.scalatest:scalatest_2.10:2.2.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.scalatest/scalatest_2.10/bundles/scalatest_2.10-2.2.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.slf4j:jcl-over-slf4j:1.7.10:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.slf4j/jcl-over-slf4j/jars/jcl-over-slf4j-1.7.10.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.slf4j:jul-to-slf4j:1.7.10:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.slf4j/jul-to-slf4j/jars/jul-to-slf4j-1.7.10.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.slf4j:slf4j-api:1.7.2:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.7.2.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.slf4j:slf4j-log4j12:1.7.10:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.slf4j/slf4j-log4j12/jars/slf4j-log4j12-1.7.10.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.sonatype.sisu.inject:cglib:2.2.1-v20090111:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.sonatype.sisu.inject/cglib/jars/cglib-2.2.1-v20090111.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.spark-project.spark:unused:1.0.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.spark-project.spark/unused/jars/unused-1.0.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.tachyonproject:tachyon-client:0.7.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.tachyonproject/tachyon-client/jars/tachyon-client-0.7.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.tachyonproject:tachyon-underfs-hdfs:0.7.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.tachyonproject/tachyon-underfs-hdfs/jars/tachyon-underfs-hdfs-0.7.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.tachyonproject:tachyon-underfs-local:0.7.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.tachyonproject/tachyon-underfs-local/jars/tachyon-underfs-local-0.7.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.tukaani:xz:1.0:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.tukaani/xz/jars/xz-1.0.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.uncommons.maths:uncommons-maths:1.2.2a:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.uncommons.maths/uncommons-maths/jars/uncommons-maths-1.2.2a.jar"/>
+  </path>
+  
+  <path id="library.sbt:_org.xerial.snappy:snappy-java:1.1.1.7:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/org.xerial.snappy/snappy-java/bundles/snappy-java-1.1.1.7.jar"/>
+  </path>
+  
+  <path id="library.sbt:_oro:oro:2.0.8:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/oro/oro/jars/oro-2.0.8.jar"/>
+  </path>
+  
+  <path id="library.sbt:_stax:stax-api:1.0.1:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/stax/stax-api/jars/stax-api-1.0.1.jar"/>
+  </path>
+  
+  <path id="library.sbt:_xmlenc:xmlenc:0.52:jar.classpath">
+    <pathelement location="C:/Users/Administrator/.ivy2/cache/xmlenc/xmlenc/jars/xmlenc-0.52.jar"/>
+  </path>
+  
+  
+  <!-- Global Libraries -->
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  <import file="${basedir}/.idea/modules/module_di-tech-16.xml"/>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.di-tech-16" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.di-tech-16" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.ditech" value="${basedir}/out/artifacts/ditech"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.ditech.jar" value="${artifacts.temp.dir}/ditech.jar"/>
+  </target>
+  
+  <target name="artifact.ditech" depends="init.artifacts, compile.module.di-tech-16" description="Build &#39;ditech&#39; artifact">
+    <property name="artifact.temp.output.ditech" value="${artifacts.temp.dir}/ditech"/>
+    <mkdir dir="${artifact.temp.output.ditech}"/>
+    <jar destfile="${temp.jar.path.ditech.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${di-tech-16.output.dir}"/>
+    </jar>
+    <copy file="${temp.jar.path.ditech.jar}" tofile="${artifact.temp.output.ditech}/ditech.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.ditech" description="Build all artifacts">
+    <mkdir dir="${artifact.output.ditech}"/>
+    <copy todir="${artifact.output.ditech}">
+      <fileset dir="${artifact.temp.output.ditech}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
