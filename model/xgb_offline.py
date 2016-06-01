@@ -79,5 +79,13 @@ if __name__ == "__main__":
 
 	run(train_fp, test_fp, pred_fp, key_fp)
 
+	#run for online
+	# data_fp = "E:/Di-tech/data/raw/season_1/test_set_1"
+	# train_fp = data_fp + "/train_libsvm"
+	# test_fp = data_fp + "/test_libsvm"
+	# pred_fp = data_fp + "/ans/ans.csv"
+	# key_fp = data_fp + "/test_key"
+
+	# run(train_fp, test_fp, pred_fp, key_fp)
 
 	print "[%s] [INFO] gradient boosting for regression from xgboost done\n" % t_now()
