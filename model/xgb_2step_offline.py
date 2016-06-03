@@ -63,7 +63,7 @@ def copy_sampling( dtrain, cp ):
 			# ind_list.extend( ind_arr[ j ] )
 
 
-	ind_arr = np.where( label > 0 )[0].ravel()
+	ind_arr = np.where( label >= 1 )[0].ravel()
 	for i in range(0,cp):
 		ind_list.extend( ind_arr )
 
@@ -71,27 +71,49 @@ def copy_sampling( dtrain, cp ):
 	print "indices length:" + str( len( indices ) )
 	return dtrain.slice( indices )
 
+def get_binary( dtrain ):
+	label = dtrain.get_label()
+	l = len( label)
+
+	#dtrain_pos = dtrain.slice( np.array( range(0,l) ))	
+	dtrain_pos = dtrain.slice( np.where( label > 0 )[0].ravel() )
+	label[ label > 0 ] = 1
+	print "binary labels:" + str( label  )
+	dtrain.set_label( label )
+	return dtrain,dtrain_pos
+
 def run(train_fp, test_fp, pred_fp, key_fp):
 
-	params = {}
+	params_reg = {}
 	with open("xgb_reg.params", 'r') as f:
-		params = json.load(f)
-	print "[%s] [INFO] params: %s\n" % (t_now(), str(params))
+		params_reg = json.load(f)
+	print "[%s] [INFO] params: %s\n" % (t_now(), str(params_reg))
+
+	params_binary = {}
+	with open("xgb_class.params", 'r') as f:
+		params_binary = json.load(f)
+	print "[%s] [INFO] params: %s\n" % (t_now(), str(params_binary))
+
 
 	keys = []
 	load(key_fp, keys)
 
 	dtrain = xgb.DMatrix(train_fp)
+	dtrain_binary,dtrain = get_binary( dtrain )
 	# dtrain = neg_sampling( dtrain, params['negsample_rate'] )
-	# dtrain = copy_sampling( dtrain, 140 )
-	# print "label length:" + str( len( dtrain.get_label() ) )
+	#dtrain_binary = copy_sampling( dtrain_binary, 20 )
+	print "label length:" + str( len( dtrain.get_label() ) )
 	dtest = xgb.DMatrix(test_fp)
-
-	model = xgb.train( params, dtrain, params['n_round'], obj= customed_obj_2)
-	# model = xgb.train( params, dtrain, params['n_round'])
+	
+	#model = xgb.train( params_reg, dtrain, params_reg['n_round'], obj= customed_obj_2)
+	model_binary = xgb.train( params_binary, dtrain_binary, params_binary['n_round'] )
+	model = xgb.train( params_reg, dtrain, params_reg['n_round'])
 	#pred = model.predict(dtest, ntree_limit=params['n_round'])
 	pred = model.predict(dtest)
+	pred_binary = model_binary.predict( dtest )
+#	print "predict binary:" + str( pred_binary )
 
+	pred[ pred_binary < 0.9 ] = 1
 	pred[ pred < 1 ] = 1
 	f = open(pred_fp, 'w')
 	for i in range(len(keys)):
@@ -107,8 +129,8 @@ if __name__ == "__main__":
 	# 	print "[%s] [ERROR]: check parameters!" % t_now()
 	# 	sys.exit(1)
 
-	# run for online
-	data_fp = "../data/raw/season_1/test_set_1"
+	# run for offline
+	data_fp = "../data/raw/season_1/training_data"
 	train_fp = data_fp + "/train_libsvm"
 	test_fp = data_fp + "/test_libsvm"
 	pred_fp = data_fp + "/ans/ans.csv"

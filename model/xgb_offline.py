@@ -67,7 +67,7 @@ if __name__ == "__main__":
 	# 	sys.exit(1)
 
 	# run for offline
-	data_fp = "E:/Di-tech/data/raw/season_1/training_data"
+	data_fp = "../data/raw/season_1/training_data"
 	train_fp = data_fp + "/train_libsvm"
 	test_fp = data_fp + "/test_libsvm"
 	pred_fp = data_fp + "/ans/ans.csv"

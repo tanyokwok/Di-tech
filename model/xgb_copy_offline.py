@@ -83,7 +83,7 @@ def run(train_fp, test_fp, pred_fp, key_fp):
 
 	dtrain = xgb.DMatrix(train_fp)
 	# dtrain = neg_sampling( dtrain, params['negsample_rate'] )
-	dtrain = copy_sampling( dtrain, 80 )
+	#dtrain = copy_sampling( dtrain, 80 )
 	print "label length:" + str( len( dtrain.get_label() ) )
 	dtest = xgb.DMatrix(test_fp)
 
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 	# 	sys.exit(1)
 
 	# run for offline
-	data_fp = "E:/Di-tech/data/raw/season_1/training_data"
+	data_fp = "../data/raw/season_1/training_data"
 	train_fp = data_fp + "/train_libsvm"
 	test_fp = data_fp + "/test_libsvm"
 	pred_fp = data_fp + "/ans/ans.csv"

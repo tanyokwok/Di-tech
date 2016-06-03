@@ -1,2 +1,4 @@
-/data/
-code/ditech/target/code/ditech/.idea/ 
+code/*/project/
+code/*/target/
+data/
+code/ditech/.idea/
