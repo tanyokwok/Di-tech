@@ -1,11 +1,11 @@
 {
-	"objective": "reg:linear",
+	"objective":"binary:logistic",
 	"booster" : "gbtree",
 	"nthread" : 5,
 	"eta" : 0.02,
 	"gamma" : 0,
 	"max_depth" : 5,
-	"min_child_weight" : 10,
+	"min_child_weight" : 5,
 	"subsample" : 0.8,
 	"colsample_bytree" : 0.9,
 	"n_round" : 200,

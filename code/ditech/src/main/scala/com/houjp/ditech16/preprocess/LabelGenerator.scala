@@ -37,8 +37,8 @@ object LabelGenerator {
     }
     val labels = districts.values.toArray.sorted.flatMap { did =>
       Range(1, tid_len + 1).map { tid =>
-        val gap = math.max( 1.0, did_tid_gap.getOrElse((did, tid), 0.0) )
-
+//        val gap = math.max( 1.0, did_tid_gap.getOrElse((did, tid), 0.0) )
+        val gap = did_tid_gap.getOrElse( (did,tid), 0.0 )
         s"$did,$tid\t$gap"
       }
     }
