@@ -92,7 +92,7 @@
       <file leaf-file-name="EmptyFiller.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/com/houjp/ditech16/rule/EmptyFiller.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="2.1497583">
+            <state vertical-scroll-proportion="3.4347825">
               <caret line="112" column="29" selection-start-line="112" selection-start-column="29" selection-end-line="112" selection-end-column="29" />
               <folding />
             </state>
@@ -1252,12 +1252,12 @@
       <workItem from="1464398999094" duration="1479000" />
       <workItem from="1464400538600" duration="4417000" />
       <workItem from="1464446236718" duration="20853000" />
-      <workItem from="1464876881035" duration="12150000" />
+      <workItem from="1464876881035" duration="12772000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38899000" />
+    <option name="totallyTimeSpent" value="39521000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1311" height="784" extended-state="6" />
@@ -1674,7 +1674,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/com/houjp/ditech16/rule/EmptyFiller.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.1497583">
+        <state vertical-scroll-proportion="3.4347825">
           <caret line="112" column="29" selection-start-line="112" selection-start-column="29" selection-end-line="112" selection-end-column="29" />
           <folding />
         </state>
