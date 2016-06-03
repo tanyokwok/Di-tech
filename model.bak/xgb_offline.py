@@ -12,25 +12,21 @@ import time
 def t_now():
 	return time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time()))
 
+
 def customed_obj_1(preds, dtrain):
     labels = dtrain.get_label()
-    
-    grad =  2.0 / (labels ** 2) * preds - 2.0 / labels
-    hess = 2.0 / (labels ** 2)
+    grad = 1 / ( labels + 1e-6)
+
+    grad[ preds < labels ] = grad[ preds < labels ] * -1
+    grad[ abs( preds - labels ) < 1e-6 ] = 0
+    hess = np.zeros( len(preds)) 
     return grad, hess
 
 def customed_obj_2(preds, dtrain):
 	labels = dtrain.get_label()
 
-	grad = np.zeros(len(preds))
-	for i in range(len(preds)):
-		y = labels[i]
-		f = preds[i]
-		if (abs(preds[i] - labels[i]) < 1e-6):
-			grad[i] = 0.0
-		else:
-			grad[i] = abs(y - f) * (f / y - 1.0)
-	hess = np.ones(len(preds))
+	grad = 2*preds/(labels*labels + 1e-6) - 2/(labels + 1e-6)
+	hess = 2/(labels*labels + 1e-6)
 	return grad, hess
 
 def load(fp, lines):
@@ -51,7 +47,7 @@ def run(train_fp, test_fp, pred_fp, key_fp):
 		params = json.load(f)
 	print "[%s] [INFO] params: %s\n" % (t_now(), str(params))
 
-	#model = xgb.train( params, dtrain, params['n_round'], obj= logregobj)
+	# model = xgb.train( params, dtrain, params['n_round'], obj= customed_obj_2)
 	model = xgb.train( params, dtrain, params['n_round'])
 	#pred = model.predict(dtest, ntree_limit=params['n_round'])
 	pred = model.predict(dtest)

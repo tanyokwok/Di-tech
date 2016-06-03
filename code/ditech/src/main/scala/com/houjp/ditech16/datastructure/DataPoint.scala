@@ -29,10 +29,12 @@ object DataPoint {
       "pregap_3",
       "pregapave",
       "week",
-      "tid",
-      "preArrive_1",
-    "preArrive_2",
-    "preArrive_3")
+      "tid","did",
+      "price_1", "price_2", "price_3",
+      "preArrive_1", "preArrive_2", "preArrive_3",
+      "preArriveSelf_1","preArriveSelf_2","preArriveSelf_3")
+//    "traffic_1", "traffic_2", "traffic_3")
+//      "preArrive66_1","preArrive66_2", "preArrive66_3")
 
 
     run(ditech16.train_pt + "/train_time_slices",
