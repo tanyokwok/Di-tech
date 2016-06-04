@@ -8,8 +8,8 @@ package object ditech {
   // Mac
 
   // Windows
-  val project_pt = "/home/roger/Di-tech/"
-
+//  val project_pt = "/home/roger/Di-tech/"
+  val project_pt = "E:/Di-tech/"
   val data_pt = project_pt + "/data/"
   val raw_pt = data_pt + "/raw/"
   val ans_pt = data_pt + "/ans/"

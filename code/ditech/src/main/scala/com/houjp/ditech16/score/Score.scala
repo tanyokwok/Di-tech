@@ -27,14 +27,14 @@ object Score {
       val std = Ans.load(std_fp).filter(_.gap > 1e-6)
       val ans = Ans.load(ans_fp).filter(_.gap > 1e-6)
 
-      println(run(std, ans).formatted("%.6f"))
+      run(std, ans)
     }getOrElse{
       System.exit(1)
     }
 
   }
 
-  def run(std: Array[Ans], ans: Array[Ans]): Double = {
+  def run(std: Array[Ans], ans: Array[Ans]) = {
     val std_map = std.map { e =>
       ((e.district_id, e.time_slice.date, e.time_slice.time_id), e.gap)
     }.toMap
@@ -46,7 +46,6 @@ object Score {
     val district_sum_map = collection.mutable.Map() ++ std.map(_.district_id).distinct.map(e => (e, 0.0)).toMap
     val district_len_map = collection.mutable.Map() ++ std.map(_.district_id).distinct.map(e => (e, 0.0)).toMap
 
-    var score = 0.0
 
     std_map.foreach { e =>
       // sprintln(s"${e._1}, ${e._2}, ${ans_map.getOrElse(e._1, 0.0)}")
@@ -58,12 +57,16 @@ object Score {
       district_len_map(did) += 1.0
     }
 
+    var score0 = 0.0
+    var score1 = 0.0
     district_sum_map.foreach { e =>
       println(s"District ID: ${e._1}, District Sum: ${e._2}, District Len: ${district_len_map(e._1)}")
-      score += e._2 / district_len_map(e._1)
+      score0 += e._2 / district_len_map(e._1)
+      score1 += e._2 / 45
     }
-
-    score / district_sum_map.size
+    println( "score: "
+      + (score0 / district_sum_map.size).formatted("%.6f") + " | "
+      + (score1 / 66).formatted("%.6f") )
   }
 
   case class Params(ans_name:String="ans")

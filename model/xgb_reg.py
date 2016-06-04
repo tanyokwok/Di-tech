@@ -55,7 +55,7 @@ def run(train_fp, test_fp, pred_fp, key_fp):
 	model = xgb.train( params, dtrain, params['n_round'])
 	#pred = model.predict(dtest, ntree_limit=params['n_round'])
 	pred = model.predict(dtest)
-
+	pred[ pred < 1 ] = 1
 	f = open(pred_fp, 'w')
 	for i in range(len(keys)):
 		f.write(keys[i] + "," + str(pred[i]) + "\n")

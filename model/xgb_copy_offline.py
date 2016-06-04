@@ -29,6 +29,20 @@ def customed_obj_2(preds, dtrain):
 	hess = 2/(labels*labels + 1e-6)
 	return grad, hess
 
+
+def customed_obj_3(preds, dtrain):
+	labels = dtrain.get_label()
+	grad = np.zeros( len(labels))
+	hess = np.zeros( len(labels))
+	k = 14.0
+	neg = preds < labels
+	grad = (( k + 1 )/(labels*k + 1e-6)) * pow( abs(preds/(labels + 1e-5) - 1) + 1e-6, 1/k)
+	grad[neg] = - grad[neg]
+	grad[ labels == 0 ] = 0
+	hess = (k+1)/(labels*labels*k*k + 1e-6)*pow( abs(preds/(labels + 1e-5) -1) + 1e-6, 1/k -1)
+	hess[ labels == 0 ] = 0
+	return grad, hess
+
 def load(fp, lines):
 	f = open(fp)
 	for line in f :
@@ -83,11 +97,11 @@ def run(train_fp, test_fp, pred_fp, key_fp):
 
 	dtrain = xgb.DMatrix(train_fp)
 	# dtrain = neg_sampling( dtrain, params['negsample_rate'] )
-	#dtrain = copy_sampling( dtrain, 80 )
+	# dtrain = copy_sampling( dtrain, 2 )
 	print "label length:" + str( len( dtrain.get_label() ) )
 	dtest = xgb.DMatrix(test_fp)
 
-	model = xgb.train( params, dtrain, params['n_round'], obj= customed_obj_2)
+	model = xgb.train( params, dtrain, params['n_round'], obj= customed_obj_3)
 	# model = xgb.train( params, dtrain, params['n_round'])
 	#pred = model.predict(dtest, ntree_limit=params['n_round'])
 	pred = model.predict(dtest)

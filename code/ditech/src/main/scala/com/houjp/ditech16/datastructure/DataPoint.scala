@@ -29,8 +29,9 @@ object DataPoint {
       "pregap_3",
       "pregapave",
       "week",
-      "tid","did",
-      "price_1", "price_2", "price_3",
+      "tid",//"did",
+//      "price_1", "price_2", "price_3",
+      "demand_1","demand_2","demand_3",
       "preArrive_1", "preArrive_2", "preArrive_3",
       "preArriveSelf_1","preArriveSelf_2","preArriveSelf_3")
 //    "traffic_1", "traffic_2", "traffic_3")
