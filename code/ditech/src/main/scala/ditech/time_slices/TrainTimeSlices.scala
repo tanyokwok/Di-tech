@@ -8,9 +8,10 @@ import ditech.common.util.DateIncrement
   */
 object TrainTimeSlices {
 
-//  val slices = Range(36,144).toArray
+  val corr_slices = Array[Integer](46,58,70,82,94,106,118,130,142)
+  val slices = Range(36,144).toArray ++ corr_slices
 //  val slices = Array[Integer](46,58,70,82,94,106,118,130,142)
-  val slices = Array[Integer](45,46,47,57,58,59,69,70,71,81,82,83,93,94,95,105,106,107,117,118,119,129,130,131,141,142,143)
+//  val slices = Array[Integer](45,46,47,57,58,59,69,70,71,81,82,83,93,94,95,105,106,107,117,118,119,129,130,131,141,142,143)
   def run(output_pt:String,start_date:String): Unit ={
     val date = DateIncrement(start_date)
     val list: Array[String] = Range(0,14).map{
