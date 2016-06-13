@@ -24,18 +24,25 @@ class DataPoint(val district_id: Int,
 object DataPoint {
 
   def main(args: Array[String]) {
-    val fs_names = Array("pregap_1",
-      "pregap_2",
-      "pregap_3",
-      "pregapave",
+    val fs_names = Array(
       "week",
-      "tid","did",
-      "price_1", "price_2", "price_3",
+      "tid",
+//      "tid",//"did",
+//      "price_1", "price_2", "price_3",
+      "poi",
+//      "miniArrive","miniArriveSelf",
+//      "fineArriveSelf",
+//      "fineArrive_1","fineArrive_2","fineArrive_3","fineArrive_4","fineArrive_5",
+//      "finegap_1","finegap_2","finegap_3","finegap_4","finegap_5",
+      "GDRate",
+      "weatherOHE",
+      "pregap_1","pregap_2","pregap_3","pregapave",
       "demand_1","demand_2","demand_3",
       "preArrive_1", "preArrive_2", "preArrive_3",
-      "preArriveSelf_1","preArriveSelf_2","preArriveSelf_3",
+      "preArriveSelf_1","preArriveSelf_2","preArriveSelf_3")
 //    "traffic_1", "traffic_2", "traffic_3")
-      "preArrive66_1","preArrive66_2", "preArrive66_3")
+//      "weather")
+//      "preArrive66_1","preArrive66_2", "preArrive66_3")
 
 
     run(ditech16.train_pt + "/train_time_slices",
@@ -58,29 +65,41 @@ object DataPoint {
 
   }
 
-  def load_local(date: String, fp: String, time_ids: Set[Int]): Array[DataPoint] = {
+  def load_local(date: String, fp: String, time_ids: Array[Int]): Array[DataPoint] = {
 
-    IO.load(fp).map { s =>
+    val time_id_set = time_ids.toSet
+    val records_map: Map[Int, Array[(Int, Int, Double)]] = IO.load(fp).map { s =>
       val Array(key, gap_s) = s.split("\t")
       val Array(did_s, tid_s) = key.split(",")
-      ((did_s.toInt, tid_s.toInt), gap_s.toDouble)
-    }.filter(e => time_ids.contains(e._1._2)).map { e =>
-      val ts_s = s"$date-${e._1._2}"
-      new DataPoint(e._1._1, TimeSlice.parse(ts_s), e._2, collection.mutable.ArrayBuffer[Double]())
+      (tid_s.toInt, did_s.toInt, gap_s.toDouble)
+    }.filter( e => time_id_set.contains(e._1)).groupBy(_._1)
+
+    time_ids.flatMap{
+      tid =>
+        val records: Array[(Int, Int, Double)] = records_map.getOrElse(tid,Array[(Int,Int,Double)]())
+
+        records.map {
+          e =>
+            val ts_s = s"$date-${e._1}"
+            new DataPoint(e._2, TimeSlice.parse(ts_s), e._3, collection.mutable.ArrayBuffer[Double]())
+        }
     }
   }
 
-  def append(date: String, fp: String, dps: Array[DataPoint], time_ids: Set[Int]) = {
-    val new_fs = IO.load(fp).map { s =>
+  def append(date: String, fp: String, dps: Array[DataPoint], time_ids: Array[Int]) = {
+    val time_id_set = time_ids.toSet
+    val new_fs: Map[(Int, Int), Array[Double]] = IO.load(fp).map { s =>
       val Array(key, fs_s) = s.split("\t")
       val Array(did_s, tid_s) = key.split(",")
       ((did_s.toInt, tid_s.toInt), fs_s.split(",").map(_.toDouble))
-    }.filter(e => time_ids.contains(e._1._2))
+    }.filter(e => time_id_set.contains(e._1._2)).toMap
 
-    require(new_fs.length == dps.length, "n(DataPoint) != n(FeaturePoint)")
+//    require(new_fs.length == dps.length, "n(DataPoint) != n(FeaturePoint)")
 
-    new_fs.indices.foreach { id =>
-      dps(id).fs ++= new_fs(id)._2
+    dps.foreach{
+      dp =>
+        val fs = new_fs( (dp.district_id,dp.time_slice.time_id) )
+        dp.fs ++= fs
     }
   }
 
@@ -90,13 +109,13 @@ object DataPoint {
           fs_names: Array[String]): Unit = {
 
     val time_slices = TimeSlice.load_local(time_slice_fp)
-//    val dates = time_slices.map(_.date).distinct
-    val dates = time_slices.map(_.date)
+    val dates = time_slices.map(_.date).distinct
+//    val dates = time_slices.map(_.date)
 
     val all_data = collection.mutable.ArrayBuffer[DataPoint]()
 
     dates.foreach { date =>
-      val time_ids: Set[Int] = time_slices.filter(_.date == date).map(_.time_id).toSet
+      val time_ids: Array[Int] = time_slices.filter(_.date == date).map(_.time_id)
 
       val label_fp = ditech16.s1_pt + s"/label/label_$date"
       val dps = load_local(date, label_fp, time_ids)

@@ -31,6 +31,9 @@ def customed_obj_1(preds, dtrain):
     grad[ labels == 0 ] = 0
     hess = 1 / (labels + 1e-6) 
     hess[labels == 0 ] = 0
+
+    # print "grad: " + str( grad )
+    # print "hess: " + str( hess )
     return grad, hess
 
 
@@ -61,21 +64,13 @@ def customed_obj_4(preds, dtrain):
 	labels = dtrain.get_label()
 	grad = np.zeros( len(labels))
 	hess = np.zeros( len(labels))
-	k = 4.0
+	k = 14.0
 	neg = preds < labels
-	pos = preds >= labels
-	grad[pos] = -( k - 1 )/(labels[pos]*k + 1e-6) * pow( abs(preds[pos]/(labels[pos] + 1e-6) - 1) + 1e-6, -1/k)
-	grad[neg] = ( k - 1 )/ ( labels[neg] * k + 1e-6) * pow( abs(1 - preds[neg]/(labels[neg] + 1e-6 )) + 1e-6, -1/k)
+	grad = (( k + 1 )/k) * pow( abs(preds - labels) + 1e-6, 1/k)
+	grad[neg] = - grad[neg]
 	grad[ labels == 0 ] = 0
-
-	hess[pos] = -(k-1)/(labels[pos]*labels[pos]*k*k + 1e-6)*pow( abs(preds[pos]/(labels[pos] + 1e-6) -1) + 1e-6, -1/k -1)
-	hess[neg] = -(k-1)/(labels[neg]*labels[neg]*k*k + 1e-6)*pow( abs(1 - preds[neg]/(labels[neg] + 1e-6)) + 1e-6, -1/k -1)
+	hess = (k+1)/(k*k)*pow( abs(preds - labels ) + 1e-6, 1/k -1)
 	hess[ labels == 0 ] = 0
-	# grad_t, hess_t = customed_obj_2( preds, dtrain)
-	# print grad
-	# print grad_t
-	# print hess
-	# print hess_t
 	return grad, hess
 
 def load(fp, lines):

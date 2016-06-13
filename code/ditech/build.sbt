@@ -8,5 +8,6 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-math3" % "3.5",
   "org.apache.commons" % "commons-lang3" % "3.4",
   "com.github.scopt" %% "scopt" % "3.2.0",
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.1" % "test",
+  "org.scala-saddle" %% "saddle-core" % "1.3.+"
 )

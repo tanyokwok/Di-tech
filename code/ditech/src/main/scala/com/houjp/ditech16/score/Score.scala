@@ -8,6 +8,9 @@ object Score {
 
   def optionParser(): OptionParser[Params]={
     val parser = new OptionParser[Params]("Score"){
+      opt[String]("std_name")
+        .text(s"the name of standard answer")
+        .action((x,c) => c.copy( std_name = x ))
       opt[String]("ans_name")
         .text(s"the name of answer")
         .action((x,c) => c.copy( ans_name = x ))
@@ -20,7 +23,7 @@ object Score {
     val parser = optionParser()
     parser.parse(args, default_params).map{
       params =>
-      val std_fp = ditech16.train_ans_pt + "/std.csv"
+      val std_fp = ditech16.train_ans_pt + s"/${params.std_name}.csv"
       val ans_fp = ditech16.train_ans_pt + s"/${params.ans_name}.csv"
 
         println(s"evaluate answer " + ans_fp)
@@ -28,7 +31,7 @@ object Score {
       val ans = Ans.load(ans_fp).filter(_.gap > 1e-6)
 
       run(std, ans)
-    }getOrElse{
+    }.getOrElse{
       System.exit(1)
     }
 
@@ -60,7 +63,7 @@ object Score {
     var score0 = 0.0
     var score1 = 0.0
     district_sum_map.foreach { e =>
-      println(s"District ID: ${e._1}, District Sum: ${e._2}, District Len: ${district_len_map(e._1)}")
+//      println(s"District ID: ${e._1}, District Sum: ${e._2}, District Len: ${district_len_map(e._1)}")
       score0 += e._2 / district_len_map(e._1)
       score1 += e._2 / 45
     }
@@ -69,5 +72,5 @@ object Score {
       + (score1 / 66).formatted("%.6f") )
   }
 
-  case class Params(ans_name:String="ans")
+  case class Params(std_name:String="std",ans_name:String="ans")
 }

@@ -1,11 +1,11 @@
 package com.houjp.ditech16.feature
 
 import java.text.SimpleDateFormat
-import java.util.{Date, Calendar}
+import java.util.Calendar
 
 import com.houjp.common.io.IO
 import com.houjp.ditech16
-import com.houjp.ditech16.datastructure.{OrderAbs, District}
+import com.houjp.ditech16.datastructure.District
 import ditech.common.util.Directory
 
 object Week {
@@ -38,7 +38,7 @@ object Week {
 
           val wid = cld.get(Calendar.DAY_OF_WEEK)
           v(wid - 1) = 1.0
-          if (wid == 1 || wid == 7) {
+          if (wid == 1 || wid == 7 || "2016-01-01".equals(date)) {
             v(7) = 1.0
           }
           s"$did,$tid\t${v.mkString(",")}"

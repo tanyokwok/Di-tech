@@ -130,7 +130,7 @@ def run(train_fp, test_fp, pred_fp, key_fp):
 	pred_binary = model_binary.predict( dtest )
 #	print "predict binary:" + str( pred_binary )
 
-	pred[ pred_binary < 0.8 ] = 1
+	# pred[ pred_binary < 0.9 ] = 1
 	pred[ pred < 1 ] = 1
 	f = open(pred_fp, 'w')
 	for i in range(len(keys)):

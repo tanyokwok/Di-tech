@@ -1,0 +1,13 @@
+{
+	"objective": "reg:linear",
+	"booster" : "gbtree",
+	"nthread" : 15,
+	"eta" : 0.1,
+	"gamma" : 0,
+	"max_depth" : 10,
+	"min_child_weight" : 10,
+	"subsample" : 0.8,
+	"colsample_bytree" : 0.9,
+	"n_round" : 3000,
+	"negsample_rate": 1 
+}

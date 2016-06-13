@@ -19,14 +19,31 @@ def customed_obj_1(preds, dtrain):
 
     grad[ preds < labels ] = grad[ preds < labels ] * -1
     grad[ abs( preds - labels ) < 1e-6 ] = 0
-    hess = np.zeros( len(preds)) 
+    print grad
+    hess = np.zeros( len(preds))  + 0.1
     return grad, hess
 
 def customed_obj_2(preds, dtrain):
 	labels = dtrain.get_label()
 
 	grad = 2*preds/(labels*labels + 1e-6) - 2/(labels + 1e-6)
+	grad = grad / 4
 	hess = 2/(labels*labels + 1e-6)
+	hess = hess/4
+	return grad, hess
+
+
+def customed_obj_3(preds, dtrain):
+	labels = dtrain.get_label()
+	grad = np.zeros( len(labels))
+	hess = np.zeros( len(labels))
+	k = 14.0
+	neg = preds < labels
+	grad = (( k + 1 )/(labels*k + 1e-6)) * pow( abs(preds/(labels + 1e-5) - 1) + 1e-6, 1/k)
+	grad[neg] = - grad[neg]
+	grad[ labels == 0 ] = 0
+	hess = (k+1)/(labels*labels*k*k + 1e-6)*pow( abs(preds/(labels + 1e-5) -1) + 1e-6, 1/k -1)
+	hess[ labels == 0 ] = 0
 	return grad, hess
 
 def load(fp, lines):
@@ -75,8 +92,8 @@ def get_binary( dtrain ):
 	label = dtrain.get_label()
 	l = len( label)
 
-	# dtrain_pos = dtrain.slice( np.array( range(0,l) ))	
-	dtrain_pos = dtrain.slice( np.where( label > 0 )[0].ravel() )
+	dtrain_pos = dtrain.slice( np.array( range(0,l) ))	
+	# dtrain_pos = dtrain.slice( np.where( label > 0 )[0].ravel() )
 	label[ label > 0 ] = 1
 	print "binary labels:" + str( label  )
 	dtrain.set_label( label )
@@ -105,7 +122,7 @@ def run(train_fp, test_fp, pred_fp, key_fp):
 	print "label length:" + str( len( dtrain.get_label() ) )
 	dtest = xgb.DMatrix(test_fp)
 	
-	model = xgb.train( params_reg, dtrain, params_reg['n_round'], obj= customed_obj_2)
+	model = xgb.train( params_reg, dtrain, params_reg['n_round'], obj= customed_obj_3)
 	model_binary = xgb.train( params_binary, dtrain_binary, params_binary['n_round'] )
 	# model = xgb.train( params_reg, dtrain, params_reg['n_round'])
 	#pred = model.predict(dtest, ntree_limit=params['n_round'])
