@@ -13,7 +13,7 @@ object MixFeature {
       "preArrive_1","preArrive_2","preArrive_3",
       "preArriveSelf_1","preArriveSelf_2","preArriveSelf_3"
     )
-    run(fs_names,"feat_mix")
+    run(fs_names,this.getClass.getSimpleName.replace("$",""))
   }
 
   def run(fs_names:Array[String],new_fs_name:String): Unit ={

@@ -10,7 +10,7 @@ object FineGap {
 
   def main(args: Array[String]) {
     // 寻找往前 pre 个时间片的gap
-    run(ditech16.s1_pt,"finegap" )
+    run(ditech16.s1_pt,FineGap.getClass.getSimpleName.replace("$","") )
 
   }
 

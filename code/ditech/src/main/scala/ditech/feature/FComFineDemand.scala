@@ -10,8 +10,8 @@ import ditech.common.util.Directory
 object FComFineDemand {
 
   def main(args:Array[String]): Unit ={
-    val fs_names = Array( "fineDemand")
-    run(fs_names,"FComFineDemand")
+    val fs_names = Array( FineDemand.getClass.getSimpleName.replace("$",""))
+    run(fs_names,FComFineDemand.getClass.getSimpleName.replace("$",""))
   }
 
   def run(fs_names:Array[String],new_fs_name:String): Unit ={

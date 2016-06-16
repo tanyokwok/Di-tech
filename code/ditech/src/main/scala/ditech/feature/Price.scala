@@ -9,13 +9,10 @@ object Price {
 
   def main(args: Array[String]) {
     // 寻找往前 pre 个时间片的arrive
-    run(ditech16.s1_pt, 1)
-    run(ditech16.s1_pt, 2)
-    run(ditech16.s1_pt, 3)
-
+    run(ditech16.s1_pt,this.getClass.getSimpleName.replace("$","") )
   }
 
-  def run(data_pt: String, pre: Int): Unit = {
+  def run(data_pt: String, f_name:String): Unit = {
     val districts_fp = data_pt + "/cluster_map/cluster_map"
     val districts = District.load_local(districts_fp)
 
@@ -26,19 +23,23 @@ object Price {
       val order_abs_fp = data_pt + s"/order_abs_data/order_data_$date"
       val orders_abs = OrderAbs.load_local(order_abs_fp)
 
-      val price_dir= data_pt + s"/fs/price_$pre"
+      val price_dir= data_pt + s"/fs/${f_name}"
       Directory.create( price_dir )
-      val price_fp = price_dir + s"/price_${pre}_$date"
+      val price_fp = price_dir + s"/${f_name}_$date"
 
-      val price = cal_price(orders_abs, pre)
+      val price1 = cal_price(orders_abs, 1)
+      val price2 = cal_price(orders_abs, 2)
+      val price3 = cal_price(orders_abs, 3)
 
       val price_s = districts.values.toArray.sorted.flatMap { did =>
         Range(1, 145).map { tid =>
           val feat = new StringBuilder(s"$did,$tid\t")
           Range(0,5).foreach{
             pid =>
-              val v = price.getOrElse((did, tid,pid), 0.0)
-              feat.append(s"$v,")
+              val v1 = price1.getOrElse((did, tid,pid), 0.0)
+              val v2 = price2.getOrElse((did, tid,pid), 0.0)
+              val v3 = price3.getOrElse((did, tid,pid), 0.0)
+              feat.append(s"$v1,$v2,$v3,")
           }
           feat.substring(0, feat.length - 1)
         }

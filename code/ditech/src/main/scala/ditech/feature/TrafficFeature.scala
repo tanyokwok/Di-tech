@@ -10,13 +10,11 @@ object TrafficFeature {
 
   def main(args: Array[String]) {
     // 寻找往前 pre 个时间片的arrive
-    run(ditech16.s1_pt, 1)
-    run(ditech16.s1_pt, 2)
-    run(ditech16.s1_pt, 3)
+    run(ditech16.s1_pt, this.getClass.getSimpleName.replace("$",""))
   }
 
 
-  def run(data_pt: String, pre: Int): Unit = {
+  def run(data_pt: String, f_name:String): Unit = {
     val districts_fp = data_pt + "/cluster_map/cluster_map"
     val districts = District.load_local(districts_fp)
 
@@ -27,16 +25,21 @@ object TrafficFeature {
       val traffic_fp = data_pt + s"/traffic_data/traffic_data_$date"
       val traffic_abs = TrafficAbs.load_local(traffic_fp,districts)
 
-      val preTraffic_dir= data_pt + s"/fs/traffic_$pre"
+      val preTraffic_dir= data_pt + s"/fs/${f_name}"
       Directory.create( preTraffic_dir )
-      val preTraffic_fp = preTraffic_dir + s"/traffic_${pre}_$date"
+      val preTraffic_fp = preTraffic_dir + s"/${f_name}_$date"
 
-      val preTraffic = cal_pre_traffic(traffic_abs, pre)
+      val preTraffic1 = cal_pre_traffic(traffic_abs, 1)
+      val preTraffic2 = cal_pre_traffic(traffic_abs, 2)
+      val preTraffic3 = cal_pre_traffic(traffic_abs, 3)
 
       val preTraffic_s = districts.values.toArray.sorted.flatMap { did =>
         Range(1, 145).map { tid =>
-          val v = preTraffic.getOrElse((did, tid), (0,0,0,0) )
-          s"$did,$tid\t${v._1},${v._2},${v._3},${v._4}"
+          val v1 = preTraffic1.getOrElse((did, tid), (0,0,0,0) )
+          val v2 = preTraffic2.getOrElse((did, tid), (0,0,0,0) )
+          val v3 = preTraffic3.getOrElse((did, tid), (0,0,0,0) )
+          s"$did,$tid\t${v1._1},${v1._2},${v1._3},${v1._4},${v2._1}" +
+            s",${v2._2},${v2._3},${v2._4},${v3._1},${v3._2},${v3._3},${v3._4}"
         }
       }
       IO.write(preTraffic_fp, preTraffic_s)
@@ -51,7 +54,7 @@ object TrafficFeature {
       group =>
         val did = group._1._1
         var tid = ( group._1._2 + t_len ) % 144
-        if( tid == 0 ) tid = 144
+        if( tid == 0  ) tid = 144
 
 
         val x: (Double, Double, Double, Double) = group._2.map{ e =>

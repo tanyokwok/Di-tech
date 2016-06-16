@@ -11,9 +11,9 @@ object FComPreGap {
 
   def main(args:Array[String]): Unit ={
     val fs_names = Array(
-      "pregap_1","pregap_2","pregap_3"
+      PreGap.getClass.getSimpleName.replace("$","")
     )
-    run(fs_names,"FComPreGap")
+    run(fs_names,FComPreGap.getClass.getSimpleName.replace("$",""))
   }
 
   def run(fs_names:Array[String],new_fs_name:String): Unit ={

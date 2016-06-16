@@ -11,9 +11,9 @@ object FComFineGap {
 
   def main(args:Array[String]): Unit ={
     val fs_names = Array(
-      "finegap"
+      FineGap.getClass.getSimpleName.replace("$","")
     )
-    run(fs_names,"FComFineGap")
+    run(fs_names,FComFineGap.getClass.getSimpleName.replace("$",""))
   }
 
   def run(fs_names:Array[String],new_fs_name:String): Unit ={

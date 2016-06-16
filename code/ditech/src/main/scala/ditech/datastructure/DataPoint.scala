@@ -5,6 +5,7 @@ import java.io.{File, PrintWriter}
 import com.houjp.common.io.IO
 import com.houjp.ditech16
 import com.houjp.ditech16.datastructure.TimeSlice
+import ditech.common.util.Directory
 import scopt.OptionParser
 
 class DataPoint(val district_id: Int,
@@ -27,32 +28,32 @@ class DataPoint(val district_id: Int,
 
 object DataPoint {
 
-  def run(fs_names:Array[String]): Unit ={
+  def run(fs_names:Array[String], train_pt:String, test_pt:String): Unit ={
 
     run(ditech16.train_pt + "/train_time_slices",
-      ditech16.train_pt + "/train_key",
-      ditech16.train_pt + "/train_libsvm",
+      train_pt + "/train_key",
+      train_pt + "/train_libsvm",
       fs_names)
     run(ditech16.train_pt + "/test_time_slices",
-      ditech16.train_pt + "/test_key",
-      ditech16.train_pt + "/test_libsvm",
+      train_pt + "/test_key",
+      train_pt + "/test_libsvm",
       fs_names)
     run(ditech16.train_pt + "/val_time_slices1",
-      ditech16.train_pt + "/val_key1",
-      ditech16.train_pt + "/val_libsvm1",
+      train_pt + "/val_key1",
+      train_pt + "/val_libsvm1",
       fs_names)
       run(ditech16.train_pt + "/val_time_slices2",
-      ditech16.train_pt + "/val_key2",
-      ditech16.train_pt + "/val_libsvm2",
+      train_pt + "/val_key2",
+      train_pt + "/val_libsvm2",
       fs_names)
 
     run(ditech16.test1_pt + "/train_time_slices",
-      ditech16.test1_pt + "/train_key",
-      ditech16.test1_pt + "/train_libsvm",
+      test_pt + "/train_key",
+      test_pt + "/train_libsvm",
       fs_names)
     run(ditech16.test1_pt + "/test_time_slices",
-      ditech16.test1_pt + "/test_key",
-      ditech16.test1_pt + "/test_libsvm",
+      test_pt + "/test_key",
+      test_pt + "/test_libsvm",
       fs_names)
   }
 
@@ -61,6 +62,12 @@ object DataPoint {
       opt[String]("fs_names")
         .text(s"the feature names' file path")
         .action( (x,c) => c.copy( features_name_pt = x))
+      opt[String]("online_out")
+        .text(s"the feature names' file path")
+        .action( (x,c) => c.copy( online_out = x))
+      opt[String]("offline_out")
+        .text(s"the feature names' file path")
+        .action( (x,c) => c.copy( offline_out = x))
     }
     parser
   }
@@ -75,10 +82,12 @@ object DataPoint {
          line =>
            !line.startsWith("#")
        }
-        run(fs_names )
+        Directory.create( params.online_out)
+        Directory.create( params.offline_out)
+        run(fs_names, params.offline_out, params.online_out )
     }.getOrElse( System.exit(-1))
-/*
-    val fs_names = Array(
+
+ /*   val fs_names = Array(
       "week",
       "tid",
 //      "tid",//"did",
@@ -187,5 +196,5 @@ object DataPoint {
   }
 
 
-  case class Params(features_name_pt:String="features")
+  case class Params(features_name_pt:String="features.conf", online_out:String = "", offline_out:String="")
 }

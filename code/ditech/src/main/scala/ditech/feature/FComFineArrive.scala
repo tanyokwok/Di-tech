@@ -10,9 +10,8 @@ import ditech.common.util.Directory
 object FComFineArrive {
 
   def main(args:Array[String]): Unit ={
-    val fs_names = Array("fineArrive"
-    )
-    run(fs_names,"FComFineArrive")
+    val fs_names = Array(FineArrive.getClass.getSimpleName.replace("$",""))
+    run(fs_names,  this.getClass.getSimpleName.replace("$","") )
   }
 
   def run(fs_names:Array[String],new_fs_name:String): Unit ={

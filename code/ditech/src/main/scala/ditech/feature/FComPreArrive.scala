@@ -11,9 +11,9 @@ object FComPreArrive {
 
   def main(args:Array[String]): Unit ={
     val fs_names = Array(
-      "preArrive_1","preArrive_2","preArrive_3"
+      PreArrive.getClass.getSimpleName.replace("$","")
     )
-    run(fs_names,"FComPreArrive")
+    run(fs_names,FComPreArrive.getClass.getSimpleName.replace("$",""))
   }
 
   def run(fs_names:Array[String],new_fs_name:String): Unit ={

@@ -13,7 +13,7 @@ object FDTDemand {
   val districts = District.load_local(districts_fp)
 
   def main(args:Array[String]): Unit ={
-    run(ditech16.s1_pt,"FDTDemand")
+    run(ditech16.s1_pt,FDTDemand.getClass.getSimpleName.replace("$",""))
   }
 
   val stat_map = getStatisticsByDate("2016-01-01",21)

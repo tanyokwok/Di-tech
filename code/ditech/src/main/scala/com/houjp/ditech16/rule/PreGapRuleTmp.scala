@@ -2,8 +2,8 @@ package com.houjp.ditech16.rule
 
 import com.houjp.ditech16
 import com.houjp.ditech16.datastructure.{Ans, District, Order, TimeSlice}
-import com.houjp.ditech16.feature.PreGap
 import com.houjp.common.io.IO
+import ditech.feature.PreGap
 
 object PreGapRuleTmp {
 

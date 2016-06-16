@@ -3,7 +3,7 @@ package ditech.time_slices
 import com.houjp.common.io.IO
 import com.houjp.ditech16
 import com.houjp.ditech16.datastructure.{District, OrderAbs, TimeSlice}
-import com.houjp.ditech16.feature.PreGap
+import ditech.feature.PreGap
 
 object Result {
 
@@ -41,5 +41,8 @@ object Result {
       s"${e._1},${e._2}-${e._3},${e._4}"
     })
   }
+
+
+
 
 }

@@ -8,11 +8,10 @@ import ditech.common.util.Directory
 object DID {
 
   def main(args: Array[String]) {
-    run(ditech16.s1_pt)
+    run(ditech16.s1_pt,  this.getClass.getSimpleName.replace("$","") )
   }
 
-  def run(data_pt: String): Unit = {
-    val f_name = "did"
+  def run(data_pt: String, f_name:String): Unit = {
 
     val districts_fp = data_pt + "/cluster_map/cluster_map"
     val districts = District.load_local(districts_fp)

@@ -16,7 +16,7 @@ object TrainTimeSlices {
 //  val corr_slices_p2 = Array[Int](46,58,70,82,94,106,118,130,142).map(_ + 2)
 
 //  val slices = corr_slices_m2 ++ corr_slices_m1 ++ corr_slices_m ++ corr_slices_p1 ++ corr_slices_p2
-//  val corr_slices = Range(1,5).flatMap{
+//  val corr_slices = Range(0,1).flatMap{
 //  x =>
 //    Array[Integer](46,58,70,82,94,106,118,130,142)
 //  }

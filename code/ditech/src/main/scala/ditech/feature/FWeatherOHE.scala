@@ -9,9 +9,9 @@ import ditech.datastructure.Weather
 object FWeatherOHE {
 
   def main(args:Array[String]): Unit ={
-    run(ditech16.s1_pt)
+    run(ditech16.s1_pt, this.getClass.getSimpleName.replace("$",""))
   }
-  def run( data_pt:String ): Unit ={
+  def run( data_pt:String, f_name:String ): Unit ={
      val districts_fp = data_pt + "/cluster_map/cluster_map"
     val districts = District.load_local(districts_fp)
     val date_fp = data_pt + "/dates"
@@ -28,9 +28,9 @@ object FWeatherOHE {
       date =>
         val weather_data_fp = data_pt + s"/weather_data/weather_data_$date"
         val weather_map = Weather.load_map(weather_data_fp)
-        val weat_dir = data_pt + s"/fs/weatherOHE"
+        val weat_dir = data_pt + s"/fs/${f_name}"
         Directory.create( weat_dir)
-        val weat_fp = weat_dir + s"/weatherOHE_$date"
+        val weat_fp = weat_dir + s"/${f_name}_$date"
 
         val feats = districts.values.toArray.sorted.flatMap { did =>
           Range(1, 145).map {

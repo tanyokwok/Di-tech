@@ -12,23 +12,23 @@ object FDistrict {
 
   def main(args: Array[String]) {
     // 寻找往前 pre 个时间片的gap
-    run(ditech16.s1_pt)
+    run(ditech16.s1_pt,FDistrict.getClass.getSimpleName.replace("$",""))
   }
 
-  def run(data_pt: String): Unit = {
+  def run(data_pt: String, feat_name:String): Unit = {
     val districts_fp = data_pt + "/cluster_map/cluster_map"
     val districts = District.load_local(districts_fp)
 
     val date_fp = data_pt + "/dates"
     val dates = IO.load(date_fp).distinct
 
-      val pregap_dir = data_pt + s"/fs/FDistrict"
+      val pregap_dir = data_pt + s"/fs/${feat_name}"
       Directory.create( pregap_dir )
     dates.foreach { date =>
       val order_abs_fp = data_pt + s"/order_data/order_data_$date"
       val orders_abs = OrderAbs.load_local(order_abs_fp,districts)
 
-      val pregap_fp = pregap_dir + s"/FDistrict_$date"
+      val pregap_fp = pregap_dir + s"/${feat_name}_$date"
 
       val feat_map = Range(1,4).map{
         pre =>
