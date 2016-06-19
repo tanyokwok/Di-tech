@@ -1,7 +1,6 @@
 package ditech.common.util
 
 import java.text.SimpleDateFormat
-import java.util.Date
 
 /**
   * 选一个起始日期，提供方法使得对应日期每次增长一天

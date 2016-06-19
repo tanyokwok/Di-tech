@@ -1,0 +1,12 @@
+{
+	"objective": "reg:linear",
+	"nthread" : 15,
+	"eta" : 0.05,
+	"max_depth":5,
+	"min_child_weigth": 10,
+	"gamma" : 0,
+	"subsample" : 0.8,
+	"colsample_bytree" : 0.9,
+	"n_round" :3000,
+	"negsample_rate": 1 
+}

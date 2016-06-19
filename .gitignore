@@ -2,4 +2,8 @@ code/*/project/
 code/*/target/
 data/
 code/ditech/.idea/
+code/*/out/
 *.iml
+season2_verify/runnable.rar
+season2_verify/runnable/features/
+season2_verify/runnable/ditech.jar
