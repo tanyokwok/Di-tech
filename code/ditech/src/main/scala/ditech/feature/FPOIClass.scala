@@ -9,7 +9,7 @@ import ditech.datastructure.POI
 object FPOIClass {
 
   def main(args:Array[String]): Unit ={
-    run(ditech16.s1_pt, FPOIClass.getClass.getSimpleName.replace("$",""))
+    run(ditech16.data_pt, FPOIClass.getClass.getSimpleName.replace("$",""))
   }
   def run( data_pt:String, f_name:String ): Unit ={
     val districts_fp = data_pt + "/cluster_map/cluster_map"

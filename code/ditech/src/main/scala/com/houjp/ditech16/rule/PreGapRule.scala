@@ -13,10 +13,10 @@ object PreGapRule {
   }
 
   def generate_std_ans(): Unit = {
-    val ans_fp = ditech16.train_ans_pt + "/std.csv"
+    val ans_fp = ditech16.ans_pt + "/std.csv"
     var ans = Array[(Int, String, Int, Double)]()
 
-    val districts_fp = ditech16.s1_pt + "/cluster_map/cluster_map"
+    val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
     val districts = District.load_local(districts_fp)
 
     val time_slices_fp = ditech16.train_time_slices
@@ -28,7 +28,7 @@ object PreGapRule {
     time_slices.map { e =>
       s"${e.year}-${e.month.formatted("%02d")}-${e.day.formatted("%02d")}"
     }.distinct.foreach { date =>
-      val orders_abs_fp = ditech16.s1_pt + s"/order_abs_data/order_data_$date"
+      val orders_abs_fp = ditech16.data_pt + s"/order_abs_data/order_data_$date"
       val orders_abs = OrderAbs.load_local(orders_abs_fp)
       val pregap_1 = PreGap.cal_pre_gap(orders_abs, 0).filter { e =>
         time_slices_set.contains((date, e._1._2))
@@ -44,7 +44,7 @@ object PreGapRule {
   }
 
   def generate_train_ans(): Unit = {
-    val ans_fp = ditech16.train_ans_pt + "/ans.csv"
+    val ans_fp = ditech16.ans_pt + "/ans.csv"
     var ans = collection.mutable.Map[(Int, String), Double]()
 
     val districts_fp = ditech16.train_cluater_pt + "/cluster_map"

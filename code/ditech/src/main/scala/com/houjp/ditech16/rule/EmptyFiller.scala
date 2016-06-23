@@ -21,7 +21,7 @@ object EmptyFiller {
     val time_slices_fp = data_pt + "/test_time_slices"
     val time_slices: Array[TimeSlice] = TimeSlice.load_local(time_slices_fp)
 
-    val districts_fp = ditech16.s1_pt + "/cluster_map/cluster_map"
+    val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
     val districts: Map[String, Int] = District.load_local(districts_fp)
 
     val ans_rule_fp = data_pt + "/ans/ans_rule.csv"

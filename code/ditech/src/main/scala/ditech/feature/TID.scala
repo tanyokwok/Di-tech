@@ -8,7 +8,7 @@ import ditech.common.util.Directory
 object TID {
 
   def main(args: Array[String]) {
-    run(ditech16.s1_pt,this.getClass.getSimpleName.replace("$",""))
+    run(ditech16.data_pt,this.getClass.getSimpleName.replace("$",""))
   }
 
   def run(data_pt: String,f_name:String): Unit = {

@@ -7,7 +7,7 @@ import com.houjp.ditech16
 object LabelGenerator {
 
   def main(args: Array[String]) {
-    run(ditech16.s1_pt)
+    run(ditech16.data_pt)
   }
 
   def run(data_pt: String): Unit = {

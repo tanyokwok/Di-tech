@@ -7,7 +7,7 @@ import com.houjp.ditech16.datastructure.{District, OrderAbs}
 object SupplyGenerator {
 
   def main(args: Array[String]) {
-    run(ditech16.s1_pt)
+    run(ditech16.data_pt)
   }
 
   def run(data_pt: String): Unit = {

@@ -29,7 +29,6 @@ class DataPoint(val district_id: Int,
 object DataPoint {
 
   def run(fs_names:Array[String], train_pt:String, test_pt:String): Unit ={
-
     run(ditech16.train_pt + "/train_time_slices",
       train_pt + "/train_key",
       train_pt + "/train_libsvm",
@@ -51,9 +50,14 @@ object DataPoint {
       test_pt + "/train_key",
       test_pt + "/train_libsvm",
       fs_names)
+
     run(ditech16.test1_pt + "/test_time_slices",
       test_pt + "/test_key",
       test_pt + "/test_libsvm",
+      fs_names)
+    run(ditech16.test1_pt + "/val_time_slices",
+      test_pt + "/val_key",
+      test_pt + "/val_libsvm",
       fs_names)
   }
 
@@ -132,7 +136,7 @@ object DataPoint {
  def loadFeatures(date:String,fs_names:Array[String], time_id:Map[Int,Int]): Array[((Int,Int), Array[Double])] = {
     val fs_mix = fs_names.map {
       fs_name =>
-        val fs_fp = ditech16.s1_pt + s"/fs/$fs_name/${fs_name}_$date"
+        val fs_fp = ditech16.data_pt + s"/fs/$fs_name/${fs_name}_$date"
         val fs: Map[(Int, Int), Array[Double]] = IO.load(fs_fp).map {
           line =>
             val Array(key, fs_s) = line.split("\t")
@@ -172,7 +176,7 @@ object DataPoint {
     dates.foreach { date =>
       val time_ids: Map[Int, Int] = time_slices.filter(_.date == date).map(x => (x.time_id, 1)).groupBy(_._1).mapValues(_.length)
 
-      val label_fp = ditech16.s1_pt + s"/label/label_$date"
+      val label_fp = ditech16.data_pt + s"/label/label_$date"
       val labels = load_label(date, label_fp, time_ids)
 
       val feats: Array[((Int, Int), Array[Double])] = loadFeatures(date, fs_names, time_ids)

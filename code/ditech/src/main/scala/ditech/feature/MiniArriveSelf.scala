@@ -10,7 +10,7 @@ object MiniArriveSelf {
 
   def main(args: Array[String]) {
     // 寻找往前 pre 个时间片的gap
-    run(ditech16.s1_pt,this.getClass.getSimpleName.replace("$",""))
+    run(ditech16.data_pt,this.getClass.getSimpleName.replace("$",""))
   }
 
   def run(data_pt: String, f_name:String): Unit = {

@@ -9,14 +9,14 @@ import org.saddle.Vec
 
 object FDateDistrictDemand {
 
-  val districts_fp = ditech16.s1_pt + "/cluster_map/cluster_map"
+  val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
   val districts = District.load_local(districts_fp)
 
   def main(args:Array[String]): Unit ={
-    run(ditech16.s1_pt,this.getClass.getSimpleName.replace("$",""))
+    run(ditech16.data_pt,this.getClass.getSimpleName.replace("$",""))
   }
 
-  val stat_map = getStatisticsByDate("2016-01-01",21)
+  val stat_map = getStatisticsByDate("2016-02-23",24)
   def getStatisticsByDate(start_date:String, day_count:Int) ={
     val date = DateIncrement(start_date)
    //get gaps of every day
@@ -24,7 +24,7 @@ object FDateDistrictDemand {
       x=>
         val date_str = date.toString
         date.next()
-        val orders = OrderAbs.load_local( ditech16.s1_pt + s"/order_data/order_data_$date_str",districts )
+        val orders = OrderAbs.load_local( ditech16.data_pt + s"/order_data/order_data_$date_str",districts )
 
         val fs = collection.mutable.Map[Int, Double]()
 

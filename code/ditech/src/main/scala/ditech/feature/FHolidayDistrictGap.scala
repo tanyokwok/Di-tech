@@ -11,20 +11,20 @@ import org.saddle.Vec
 
 object FHolidayDistrictGap {
 
-  val districts_fp = ditech16.s1_pt + "/cluster_map/cluster_map"
+  val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
   val districts = District.load_local(districts_fp)
 
   def main(args:Array[String]): Unit ={
-    run(ditech16.s1_pt,this.getClass.getSimpleName.replace("$",""))
+    run(ditech16.data_pt,this.getClass.getSimpleName.replace("$",""))
   }
 
-  val stat_map = getStatisticsByDate("2016-01-01",21)
+  val stat_map = getStatisticsByDate("2016-02-23",24)
 
   def getFeatMap(dates:IndexedSeq[(String,Int)]): collection.Map[Int,(Double, Double, Double, Double, Double)] ={
    //get gaps of every day
    val feat_map = dates.map{
      case (date_str,weekday)=>
-       val orders = OrderAbs.load_local( ditech16.s1_pt + s"/order_data/order_data_$date_str",districts )
+       val orders = OrderAbs.load_local( ditech16.data_pt + s"/order_data/order_data_$date_str",districts )
 
         val fs = collection.mutable.Map[Int, Double]()
         districts.values.toArray.distinct.sorted.foreach { did =>

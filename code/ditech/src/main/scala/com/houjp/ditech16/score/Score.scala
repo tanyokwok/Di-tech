@@ -23,12 +23,12 @@ object Score {
     val parser = optionParser()
     parser.parse(args, default_params).map{
       params =>
-      val std_fp = ditech16.train_ans_pt + s"/${params.std_name}.csv"
-      val ans_fp = ditech16.train_ans_pt + s"/${params.ans_name}.csv"
+      val std_fp = ditech16.ans_pt + s"/${params.std_name}.csv"
+      val ans_fp = ditech16.ans_pt + s"/${params.ans_name}.csv"
 
         println(s"evaluate answer " + ans_fp)
-      val std = Ans.load(std_fp).filter(_.gap > 1e-6)
-      val ans = Ans.load(ans_fp).filter(_.gap > 1e-6)
+      val std = Ans.load(std_fp)
+      val ans = Ans.load(ans_fp)
 
       run(std, ans)
     }.getOrElse{
@@ -56,7 +56,7 @@ object Score {
       val ans_gap = ans_map.getOrElse(e._1, 0.0)
       val did = e._1._1
 
-      district_sum_map(did) += math.abs((std_gap - ans_gap) / std_gap)
+      district_sum_map(did) += math.abs(std_gap - ans_gap)
       district_len_map(did) += 1.0
     }
 
@@ -65,11 +65,9 @@ object Score {
     district_sum_map.foreach { e =>
 //      println(s"District ID: ${e._1}, District Sum: ${e._2}, District Len: ${district_len_map(e._1)}")
       score0 += e._2 / district_len_map(e._1)
-      score1 += e._2 / 45
     }
     println( "score: "
-      + (score0 / district_sum_map.size).formatted("%.6f") + " | "
-      + (score1 / 66).formatted("%.6f") )
+      + (score0 / district_sum_map.size).formatted("%.6f") )
   }
 
   case class Params(std_name:String="std",ans_name:String="ans")

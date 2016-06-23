@@ -12,7 +12,7 @@ object FDistrict {
 
   def main(args: Array[String]) {
     // 寻找往前 pre 个时间片的gap
-    run(ditech16.s1_pt,FDistrict.getClass.getSimpleName.replace("$",""))
+    run(ditech16.data_pt,FDistrict.getClass.getSimpleName.replace("$",""))
   }
 
   def run(data_pt: String, feat_name:String): Unit = {

@@ -18,7 +18,7 @@ object FComFineGap {
 
   def run(fs_names:Array[String],new_fs_name:String): Unit ={
 
-    val date_fp = ditech16.s1_pt + "/dates"
+    val date_fp = ditech16.data_pt + "/dates"
     val dates = IO.load(date_fp).distinct
 
     // load all features
@@ -47,8 +47,8 @@ object FComFineGap {
             feat.substring(0, feat.length - 1)
         }
 
-        Directory.create(ditech16.s1_pt + s"/fs/$new_fs_name")
-        val fs_mix_fp = ditech16.s1_pt + s"/fs/$new_fs_name/${new_fs_name}_$date"
+        Directory.create(ditech16.data_pt + s"/fs/$new_fs_name")
+        val fs_mix_fp = ditech16.data_pt + s"/fs/$new_fs_name/${new_fs_name}_$date"
         IO.write(fs_mix_fp, new_fs)
     }
   }
@@ -63,7 +63,7 @@ object FComFineGap {
   def loadFeatures(date:String,fs_names:Array[String]): Array[(String, Array[Double])] = {
     val fs_mix = fs_names.map {
       fs_name =>
-        val fs_fp = ditech16.s1_pt + s"/fs/$fs_name/${fs_name}_$date"
+        val fs_fp = ditech16.data_pt + s"/fs/$fs_name/${fs_name}_$date"
         val fs: Map[String, Array[Double]] = IO.load(fs_fp).map {
           line =>
             val Array(key, fs_s) = line.split("\t")

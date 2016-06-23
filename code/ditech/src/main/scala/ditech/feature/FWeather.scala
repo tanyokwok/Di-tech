@@ -9,7 +9,7 @@ import ditech.datastructure.Weather
 object FWeather {
 
   def main(args:Array[String]): Unit ={
-    run(ditech16.s1_pt,FWeather.getClass.getSimpleName.replace("$",""))
+    run(ditech16.data_pt,FWeather.getClass.getSimpleName.replace("$",""))
   }
   def run( data_pt:String, f_name:String ): Unit ={
      val districts_fp = data_pt + "/cluster_map/cluster_map"

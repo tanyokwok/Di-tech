@@ -37,7 +37,7 @@ object POI {
 
   def load(poi_fp:String): Map[Int, POI] ={
     val pois = IO.load(poi_fp).map( parse)
-    val districts_fp = ditech16.s1_pt + "/cluster_map/cluster_map"
+    val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
     val districts = District.load_local(districts_fp)
 
     pois.map{
@@ -71,7 +71,7 @@ object POI {
   }
 
   def loadKmeans(): Map[Int,Int]={
-    IO.load(ditech16.s1_pt + "/poi_data/poi_kmeans").map{
+    IO.load(ditech16.data_pt + "/poi_data/poi_kmeans").map{
       line =>
         val Array(id,cls) = line.trim.split("\\s+")
 //        println( s"$id $cls")
@@ -81,7 +81,7 @@ object POI {
 
   def main(args:Array[String]): Unit ={
 
-    dump(ditech16.s1_pt + "/poi_data/poi_data", ditech16.s1_pt + "/poi_data/poi_vecs")
+    dump(ditech16.data_pt + "/poi_data/poi_data", ditech16.data_pt + "/poi_data/poi_vecs")
 //    loadKmeans()
   }
 

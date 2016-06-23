@@ -117,11 +117,11 @@ object DataPoint {
     dates.foreach { date =>
       val time_ids: Array[Int] = time_slices.filter(_.date == date).map(_.time_id)
 
-      val label_fp = ditech16.s1_pt + s"/label/label_$date"
+      val label_fp = ditech16.data_pt + s"/label/label_$date"
       val dps = load_local(date, label_fp, time_ids)
 
       fs_names.foreach { fs_name =>
-        val fs_fp = ditech16.s1_pt + s"/fs/$fs_name/${fs_name}_$date"
+        val fs_fp = ditech16.data_pt + s"/fs/$fs_name/${fs_name}_$date"
         DataPoint.append(date, fs_fp, dps, time_ids)
       }
 

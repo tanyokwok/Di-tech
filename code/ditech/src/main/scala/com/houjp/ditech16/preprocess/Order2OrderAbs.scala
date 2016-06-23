@@ -8,7 +8,7 @@ object Order2OrderAbs {
 
   def main(args: Array[String]) {
     // run(ditech16.train_pt)
-    run(ditech16.test1_pt)
+    run(ditech16.data_pt)
   }
 
   def run(data_pt: String): Unit = {

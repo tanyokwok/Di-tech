@@ -1,22 +1,20 @@
-package ditech.time_slices
+package ditech.preprocess
 
 import com.houjp.common.io.IO
 import com.houjp.ditech16
 import com.houjp.ditech16.datastructure.{District, OrderAbs, TimeSlice}
 import ditech.feature.PreGap
 
-object Result {
+object TestLabel {
 
   def main(args: Array[String]): Unit = {
-    generate_std_ans(ditech16.train_ans_pt + "/test_std.csv",ditech16.train_pt +"/test_time_slices")
-    generate_std_ans(ditech16.train_ans_pt + "/val_std1.csv",ditech16.train_pt +"/val_time_slices1")
-    generate_std_ans(ditech16.train_ans_pt + "/val_std2.csv",ditech16.train_pt +"/val_time_slices2")
+    generate_std_ans(ditech16.data_pt + "/test_label.csv",ditech16.train_pt +"/test_time_slices")
   }
 
   def generate_std_ans(ans_fp:String,time_slices_fp:String): Unit = {
     var ans = Array[(Int, String, Int, Double)]()
 
-    val districts_fp = ditech16.s1_pt + "/cluster_map/cluster_map"
+    val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
     val districts = District.load_local(districts_fp)
 
     val time_slices = TimeSlice.load_local(time_slices_fp)
@@ -27,14 +25,22 @@ object Result {
     time_slices.map { e =>
       s"${e.year}-${e.month.formatted("%02d")}-${e.day.formatted("%02d")}"
     }.distinct.foreach { date =>
-      val orders_abs_fp = ditech16.s1_pt + s"/order_abs_data/order_data_$date"
+      val orders_abs_fp = ditech16.data_pt + s"/order_abs_data/order_data_$date"
       val orders_abs = OrderAbs.load_local(orders_abs_fp)
-      val pregap_1 = PreGap.cal_pre_gap(orders_abs, 0).filter { e =>
-        time_slices_set.contains((date, e._1._2))
-      }.map { e =>
-        (e._1._1, date, e._1._2, e._2)
-      }
-      ans = ans ++ pregap_1
+       val pregap_1: Map[(Int, Int), Double] = PreGap.cal_pre_gap(orders_abs, 0)
+
+     val gap =  time_slices_set.filter{
+       time =>
+         time._1.equals( date)
+     }.flatMap{
+       case (date, tid) =>
+          Range(1,67).map{
+            did=>
+              (did, date, tid, pregap_1.getOrElse((did,tid),0.0))
+          }
+      }.toArray
+
+      ans = ans ++ gap
     }
 
     IO.write(ans_fp, ans.sorted.map { e =>

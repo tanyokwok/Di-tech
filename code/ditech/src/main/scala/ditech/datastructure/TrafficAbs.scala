@@ -59,10 +59,10 @@ object TrafficAbs {
   }
 
   def main(args:Array[String]) {
-    val districts_fp = ditech16.s1_pt + "/cluster_map/cluster_map"
+    val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
     val districts = District.load_local (districts_fp)
 
-    val traffic_fp = ditech16.s1_pt + s"/traffic_data/traffic_data_2016-01-01"
+    val traffic_fp = ditech16.data_pt + s"/traffic_data/traffic_data_2016-01-01"
     val traffic_abs = TrafficAbs.load_local (traffic_fp, districts)
   }
 }
