@@ -2,7 +2,6 @@ package ditech.preprocess
 
 import com.houjp.common.io.IO
 import com.houjp.ditech16
-import ditech.common.util.DateIncrement
 
 /**
   * Created by Administrator on 2016/5/27.
@@ -25,13 +24,11 @@ object TrainTimeSlices {
 
 //  val slices = Array[Integer](46,58,70,82,94,106,118,130,142)
 //  val slices = Array[Integer](45,46,47,57,58,59,69,70,71,81,82,83,93,94,95,105,106,107,117,118,119,129,130,131,141,142,143)
-  def run(output_pt:String,start_date:String,dayCount:Int): Unit ={
-    val date = DateIncrement(start_date)
-    val list: Array[String] = Range(0,dayCount).map{
-      x =>
-        val date_str = date.toString
-        println( date_str )
-        date.next()
+  def run(output_pt:String, end_start:String): Unit ={
+
+    val dates = IO.load(ditech16.data_pt + "/dates").filter( _ <= end_start ).distinct
+    val list: Array[String] = dates.map{
+      date_str =>
         slices.map{
           slice =>
              s"$date_str-$slice"
@@ -63,8 +60,8 @@ object TrainTimeSlices {
     val test_pt = ditech16.test1_pt + "/train_time_slices"
 
     genTestSlices(ditech16.train_pt)
-    run(train_pt,"2016-02-23",17)
-    run(test_pt,"2016-02-23",24)
+    run(train_pt,"2016-03-10")
+    run(test_pt,"2016-03-17")
 //
   }
 }

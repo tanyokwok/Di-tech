@@ -1,5 +1,6 @@
 package ditech.feature
 
+import java.text.SimpleDateFormat
 import java.util.Calendar
 
 import com.houjp.common.io.IO
@@ -12,38 +13,38 @@ import org.saddle.Vec
 object FHolidayDistrictGap {
 
   val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
-  val districts = District.load_local(districts_fp)
+  val districtsType = District.loadDidTypeId(districts_fp)
+  val districts = districtsType.mapValues( _._1 )
 
   def main(args:Array[String]): Unit ={
     run(ditech16.data_pt,this.getClass.getSimpleName.replace("$",""))
   }
 
-  val stat_map = getStatisticsByDate("2016-02-23",24)
+  val stat_map = getStatisticsByDate()
 
-  def getFeatMap(dates:IndexedSeq[(String,Int)]): collection.Map[Int,(Double, Double, Double, Double, Double)] ={
+  def getFeatMap(dates:IndexedSeq[(String,Int,Int)]): collection.Map[Int, (Double, Double, Double, Double, Double)] ={
+    val feat_map = collection.mutable.Map[Int ,Array[Double]]()
    //get gaps of every day
-   val feat_map = dates.map{
-     case (date_str,weekday)=>
+    dates.foreach{
+     case (date_str,type_id,weekday)=>
        val orders = OrderAbs.load_local( ditech16.data_pt + s"/order_data/order_data_$date_str",districts )
 
         val fs = collection.mutable.Map[Int, Double]()
-        districts.values.toArray.distinct.sorted.foreach { did =>
-          fs(did) = 0
-        }
         orders.foreach { ord =>
           if (-1 != ord.start_district_id && !ord.has_driver) {
               fs(ord.start_district_id) =
-                fs(ord.start_district_id) + 1.0
+                fs.getOrElse(ord.start_district_id,0.0) + 1.0
           }
         }
-        fs.mapValues( x => Array(x))
-    }.reduce{
-      (x,y) =>
-        val z = ( x /: y){
-          case (map, (k,v)) =>
-           map + (k->( map(k) ++ v ))
+         districtsType.values.toArray.filter{
+          case (did, tp) =>
+            tp == type_id || tp == 0
+        }.foreach{
+          case (did,tp)=>
+            feat_map( did ) = feat_map.getOrElse( did, Array[Double]()) ++ Array(fs.getOrElse( did,0.0))
         }
-       z
+
+
     }
     feat_map.mapValues{
       fs =>
@@ -52,26 +53,24 @@ object FHolidayDistrictGap {
 //        (fs_vec.mean, fs_vec.median, fs_vec.stdev )
     }
   }
-  def getStatisticsByDate(start_date:String, day_count:Int) ={
-    val date = DateIncrement(start_date)
+  def getStatisticsByDate() ={
 
     val cld = Calendar.getInstance()
+    val simFormat = new SimpleDateFormat("yyyy-MM-dd")
+    val dates_arr = IO.load(ditech16.data_pt + "/overview_dates").map{
+      line =>
+        val Array(date,type_s) = line.split("\t")
+        cld.setTime( simFormat.parse(date) )
+        val weekday = cld.get(Calendar.DAY_OF_WEEK)
+        (date, type_s.toInt, weekday)
+    }
 
-    val dates = Range(0,day_count).map{
-     x =>
-       val date_str = date.toString
-       cld.setTime( date.date )
-       val weekday = cld.get(Calendar.DAY_OF_WEEK)
-       date.next()
-       println( s"$x $date_str $weekday")
-       (date_str,weekday)
-   }
-   val  holiday_dates = dates.filter{
-     case (date_str, weekday)=>
+   val  holiday_dates = dates_arr.filter{
+     case (date_str,tp, weekday)=>
        weekday == 1 || weekday == 7 || date_str.equals("2016-01-01")
    }
-    val workday_dates = dates.filter{
-      case (date_str, weekday) =>
+    val workday_dates = dates_arr.filter{
+      case (date_str,tp, weekday) =>
         !(weekday == 1 || weekday == 7 || date_str.equals("2016-01-01"))
     }
     val holiday_feat = getFeatMap(holiday_dates)

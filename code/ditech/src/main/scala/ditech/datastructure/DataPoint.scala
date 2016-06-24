@@ -4,7 +4,7 @@ import java.io.{File, PrintWriter}
 
 import com.houjp.common.io.IO
 import com.houjp.ditech16
-import com.houjp.ditech16.datastructure.TimeSlice
+import com.houjp.ditech16.datastructure.{District, TimeSlice}
 import ditech.common.util.Directory
 import scopt.OptionParser
 
@@ -91,38 +91,6 @@ object DataPoint {
         run(fs_names, params.offline_out, params.online_out )
     }.getOrElse( System.exit(-1))
 
- /*   val fs_names = Array(
-      "week",
-      "tid",
-//      "tid",//"did",
-//      "price_1", "price_2", "price_3",
-      "poi",
-//      "FComFineGap",
-      "FComPreGap",
-      "FComPreArrive",
-//      "feat_mix",
-//      "miniArrive","miniArriveSelf",
-      "fineArriveSelf",
-      "fineArrive",
-      "finegap",
-      "fineDemand",
-//      "GDRate",
-      "weatherOHE"
-//      "FDTGap",
-//      "FDTGapByHoliday",
-//      "FDTDemand",
-//      "FDTSupply",
-//      "pregap_1","pregap_2","pregap_3","pregapave",
-//      "demand_1","demand_2","demand_3",
-//      "preArrive_1", "preArrive_2", "preArrive_3",
-//      "preArriveSelf_1","preArriveSelf_2","preArriveSelf_3"
-    )
-//    "traffic_1", "traffic_2", "traffic_3")
-//      "weather")
-//      "preArrive66_1","preArrive66_2", "preArrive66_3")
-
-    run(fs_names )
-    */
   }
 
   def load_label(date: String, fp: String, time_ids: Map[Int,Int]): Map[(Int, Int), Double] = {
@@ -167,12 +135,19 @@ object DataPoint {
 
     val time_slices = TimeSlice.load_local(time_slice_fp)
     val dates = time_slices.map(_.date).distinct
-    //    val dates = time_slices.map(_.date)
+    val overview_dates = IO.load(ditech16.data_pt + "/overview_dates").map{
+      line =>
+        val Array(date_s,type_id) = line.split("\t")
+        (date_s,type_id.toInt)
+    }.toMap
 
     val all_data = collection.mutable.ArrayBuffer[DataPoint]()
 
     val key_writer = new PrintWriter(new File(key_fp))
     val libsvm_writer = new PrintWriter(new File(libsvm_fp))
+    val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
+    val districtsType = District.loadDidTypeId(districts_fp).values.toMap
+
     dates.foreach { date =>
       val time_ids: Map[Int, Int] = time_slices.filter(_.date == date).map(x => (x.time_id, 1)).groupBy(_._1).mapValues(_.length)
 
@@ -180,7 +155,11 @@ object DataPoint {
       val labels = load_label(date, label_fp, time_ids)
 
       val feats: Array[((Int, Int), Array[Double])] = loadFeatures(date, fs_names, time_ids)
-      feats.flatMap {
+      feats.filter{
+        case ((did,tid),feat) =>
+          //如果在overview_dates中找不到，则为part2的test数据
+          districtsType(did) == overview_dates.getOrElse( date, 2 ) || districtsType(did) == 0
+      }.flatMap {
         case ((did, tid), feat) =>
           val rows = time_ids.getOrElse(tid, 0)
           Range(0, rows).map { x => (did, tid, feat) }

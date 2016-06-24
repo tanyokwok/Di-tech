@@ -10,46 +10,46 @@ import org.saddle.Vec
 object FDTDemand {
 
   val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
-  val districts = District.load_local(districts_fp)
+  val districtsType = District.loadDidTypeId(districts_fp)
+  val districts = districtsType.mapValues( _._1 )
 
   def main(args:Array[String]): Unit ={
     run(ditech16.data_pt,FDTDemand.getClass.getSimpleName.replace("$",""))
   }
 
-  val stat_map = getStatisticsByDate("2016-02-23",24)
-  def getStatisticsByDate(start_date:String, day_count:Int) ={
-    val date = DateIncrement(start_date)
-   //get gaps of every day
-    val  gaps_map = Range(0,day_count).map{
-      x=>
-        val date_str = date.toString
-        date.next()
+
+  val stat_map = getStatisticsByDate()
+  def getStatisticsByDate() ={
+    val dates_arr = IO.load(ditech16.data_pt + "/overview_dates").map{
+      line =>
+        val Array(date,type_s) = line.split("\t")
+        (date, type_s.toInt)
+    }
+
+    val gaps_map = collection.mutable.Map[(Int,Int),Array[Double]]()
+    dates_arr.foreach{
+     case (date_str, type_id)=>
+
         val orders = OrderAbs.load_local( ditech16.data_pt + s"/order_data/order_data_$date_str",districts )
+       val fs = collection.mutable.Map[(Int, Int), Double]()
 
-        val fs = collection.mutable.Map[(Int, Int), Double]()
-
-        districts.values.toArray.sorted.foreach{
-          did=>
-            Range(1,145).foreach{ tid=>
-              fs((did,tid)) = 0
-            }
-        }
         orders.foreach { ord =>
           if (-1 != ord.start_district_id) {
             fs((ord.start_district_id, ord.time_id)) =
-              fs((ord.start_district_id, ord.time_id)) + 1.0
+              fs.getOrElse((ord.start_district_id, ord.time_id),0.0) + 1.0
           }
         }
-        fs.mapValues( x => Array(x))
-    }.reduce{
-      (x,y) =>
-        val z = ( x /: y){
-          case (map, (k,v)) =>
-           map + (k->( map(k) ++ v ))
+       districtsType.values.toArray.filter{
+          case (did, tp) =>
+            tp == type_id || tp == 0
+        }.foreach{
+          case (did,tp)=>
+            Range(1,ditech16.max_time_id + 1  ).foreach{
+              tid =>
+                gaps_map( (did,tid) ) = gaps_map.getOrElse((did,tid), Array[Double]()) ++ Array(fs.getOrElse((did,tid),0.0))
+            }
         }
-       z
     }
-
     gaps_map.mapValues{
       fs =>
         val fs_vec = Vec( fs )
@@ -57,7 +57,7 @@ object FDTDemand {
 //        (fs_vec.mean, fs_vec.median, fs_vec.stdev )
     }
   }
-  def run( data_pt:String, feat_name:String ): Unit ={
+ def run( data_pt:String, feat_name:String ): Unit ={
    val date_fp = data_pt + "/dates"
    val dates = IO.load(date_fp).distinct
    dates.foreach{

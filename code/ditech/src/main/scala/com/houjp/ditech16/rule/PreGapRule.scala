@@ -47,7 +47,7 @@ object PreGapRule {
     val ans_fp = ditech16.ans_pt + "/ans.csv"
     var ans = collection.mutable.Map[(Int, String), Double]()
 
-    val districts_fp = ditech16.train_cluater_pt + "/cluster_map"
+    val districts_fp = ditech16.cluster_pt + "/cluster_map"
     val districts = District.load_local(districts_fp)
 
     val time_slices_fp = ditech16.train_time_slices

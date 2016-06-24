@@ -86,7 +86,7 @@ object EmptyFiller {
     val time_slices_fp = ditech16.test1_time_slices
     val time_slices = TimeSlice.load_local(time_slices_fp)
 
-    val districts_fp = ditech16.test1_cluater_pt + "/cluster_map"
+    val districts_fp = ditech16.cluster_pt + "/cluster_map"
     val districts = District.load_local(districts_fp)
 
     val pre_gap_fill_fp = ditech16.test1_pt + "/ans/20160526_fill_seg_model.csv"

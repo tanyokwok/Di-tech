@@ -8,7 +8,7 @@ import ditech.feature.PreGap
 object PreGapRuleTmp {
 
   def main(args: Array[String]) {
-    val districts_fp = ditech16.test1_cluater_pt + "/cluster_map"
+    val districts_fp = ditech16.cluster_pt + "/cluster_map"
     val districts = District.load_local(districts_fp)
 
     val time_slices_fp = ditech16.test1_time_slices
