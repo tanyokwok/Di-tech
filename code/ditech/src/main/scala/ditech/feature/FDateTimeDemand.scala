@@ -39,13 +39,10 @@ object FDateTimeDemand {
 
         }
 
-       districtsType.values.toArray.filter{
-          case (did, tp) =>
-            tp == type_id || tp == 0
-        }.foreach{
-          case (did,tp)=>
-            gaps_map( did ) = gaps_map.getOrElse(did, Array[Double]()) ++ Array(fs.getOrElse(did,0.0))
-        }
+       Range(1,ditech16.max_time_id + 1 ).foreach{
+         tid =>
+           gaps_map( tid ) = gaps_map.getOrElse(tid, Array[Double]()) ++ Array(fs.getOrElse(tid,0.0))
+       }
 
     }
     gaps_map.mapValues{

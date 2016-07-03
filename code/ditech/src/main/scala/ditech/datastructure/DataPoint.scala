@@ -8,6 +8,9 @@ import com.houjp.ditech16.datastructure.{District, TimeSlice}
 import ditech.common.util.Directory
 import scopt.OptionParser
 
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
+
 class DataPoint(val district_id: Int,
                 val time_slice: TimeSlice,
                 val gap: Double,
@@ -55,10 +58,20 @@ object DataPoint {
       test_pt + "/test_key",
       test_pt + "/test_libsvm",
       fs_names)
-    run(ditech16.test1_pt + "/val_time_slices",
+    val feat_idx = run(ditech16.test1_pt + "/val_time_slices",
       test_pt + "/val_key",
       test_pt + "/val_libsvm",
       fs_names)
+
+    var offset = 0
+    val feature_indexs = feat_idx.map{
+      case (fname, num)=>
+        val start = offset
+        offset = offset + num
+       s"$fname\t$start-${start+num}"
+    }.toArray
+    feature_indexs.foreach( println )
+    IO.write( train_pt + "/feature_index" , feature_indexs)
   }
 
   def optionParser():OptionParser[Params] = {
@@ -101,7 +114,12 @@ object DataPoint {
     }.filter( e=> time_ids.contains( e._1._2 )).toMap
   }
 
- def loadFeatures(date:String,fs_names:Array[String], time_id:Map[Int,Int]): Array[((Int,Int), Array[Double])] = {
+ def loadFeatures(date:String,
+                  fs_names:Array[String],
+                  time_id:Map[Int,Int]):
+ (Array[((Int, Int), Array[Double])], mutable.ArrayBuffer[(String, Int)]) ={
+
+   val feat_idx = collection.mutable.ArrayBuffer[(String,Int)]()
     val fs_mix = fs_names.map {
       fs_name =>
         val fs_fp = ditech16.data_pt + s"/fs/$fs_name/${fs_name}_$date"
@@ -114,6 +132,17 @@ object DataPoint {
           e =>
             ( (e._1, e._2), e._3.split(",").map(_.toDouble))
         }.toMap
+
+        val feat_num: Int = fs.map( _._2.size ).reduce{
+          (x,y) =>
+            if( x == y)  x
+            else -1
+        }
+        if( feat_num == -1 ){
+          println( s"$fs_name features column doesn't identical")
+          System.exit(-1)
+        }
+        feat_idx += ((fs_name, feat_num))
         fs
 
     }.reduce {
@@ -126,12 +155,13 @@ object DataPoint {
         z
     }
 
-    fs_mix.toArray
+   (fs_mix.toArray,feat_idx)
+
   }
   def run(time_slice_fp: String,
           key_fp: String,
           libsvm_fp: String,
-          fs_names: Array[String]): Unit = {
+          fs_names: Array[String]): ArrayBuffer[(String,Int)] = {
 
     val time_slices = TimeSlice.load_local(time_slice_fp)
     val dates = time_slices.map(_.date).distinct
@@ -148,13 +178,15 @@ object DataPoint {
     val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
     val districtsType = District.loadDidTypeId(districts_fp).values.toMap
 
+    var feat_idx:collection.mutable.ArrayBuffer[(String,Int)] = null
     dates.foreach { date =>
       val time_ids: Map[Int, Int] = time_slices.filter(_.date == date).map(x => (x.time_id, 1)).groupBy(_._1).mapValues(_.length)
 
       val label_fp = ditech16.data_pt + s"/label/label_$date"
       val labels = load_label(date, label_fp, time_ids)
 
-      val feats: Array[((Int, Int), Array[Double])] = loadFeatures(date, fs_names, time_ids)
+      val (feats, feat_index )= loadFeatures(date, fs_names, time_ids)
+      feat_idx = feat_index
       feats.filter{
         case ((did,tid),feat) =>
           //如果在overview_dates中找不到，则为part2的test数据
@@ -176,6 +208,7 @@ object DataPoint {
     key_writer.close()
     libsvm_writer.close()
 
+    feat_idx
   }
 
 

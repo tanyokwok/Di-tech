@@ -27,7 +27,7 @@ object MiniArriveSelf {
       val orders_abs = OrderAbs.load_local(order_abs_fp,districts)
 
       val pregap_fp = pregap_dir + s"/${f_name}_$date"
-      val arrive_map = Range(1,29).map{
+      val arrive_map = Range(0,21).map{
         pre =>
           (pre, cal_pre_gap(orders_abs, pre))
       }.toMap
@@ -35,7 +35,7 @@ object MiniArriveSelf {
       val pregap_s = districts.values.toArray.sorted.flatMap { did =>
         Range(1, 145).map { tid =>
           val feats = new StringBuilder(s"$did,$tid\t")
-          Range(1,29).foreach{
+          Range(0,21).foreach{
             pre =>
               val v = arrive_map(pre).getOrElse((did, tid), 0.0)
               feats.append( s"$v,")
@@ -52,7 +52,7 @@ object MiniArriveSelf {
     val fs = collection.mutable.Map[(Int, Int), Double]()
 
     orders.foreach { e =>
-      val tid = ( e.min_time_id + t_len + 10 )/10
+      val tid = ( e.min_time_id + 9 + t_len )/10 + 1
       if (-1 != e.dest_district_id &&
         e.dest_district_id == e.start_district_id &&
         e.has_driver &&
