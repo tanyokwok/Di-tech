@@ -1,6 +1,7 @@
 package ditech.datastructure
 
 import java.io.{File, PrintWriter}
+import java.util.concurrent.{Executors, TimeUnit}
 
 import com.houjp.common.io.IO
 import com.houjp.ditech16
@@ -9,7 +10,6 @@ import ditech.common.util.Directory
 import scopt.OptionParser
 
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 
 class DataPoint(val district_id: Int,
                 val time_slice: TimeSlice,
@@ -31,40 +31,60 @@ class DataPoint(val district_id: Int,
 
 object DataPoint {
 
+  val threadPool = Executors.newFixedThreadPool(7)
   def run(fs_names:Array[String], train_pt:String, test_pt:String): Unit ={
-    run(ditech16.train_pt + "/train_time_slices",
+
+    val train_offline_handler = new Handler(
+      ditech16.train_pt + "/train_time_slices",
       train_pt + "/train_key",
       train_pt + "/train_libsvm",
       fs_names)
-    run(ditech16.train_pt + "/test_time_slices",
+
+    val test_offline_handler = new Handler(
+      ditech16.train_pt + "/test_time_slices",
       train_pt + "/test_key",
       train_pt + "/test_libsvm",
       fs_names)
-    run(ditech16.train_pt + "/val_time_slices1",
+    val val1_offline_handler = new Handler(
+      ditech16.train_pt + "/val_time_slices1",
       train_pt + "/val_key1",
       train_pt + "/val_libsvm1",
       fs_names)
-      run(ditech16.train_pt + "/val_time_slices2",
+    val val2_offline_handler = new Handler(
+        ditech16.train_pt + "/val_time_slices2",
       train_pt + "/val_key2",
       train_pt + "/val_libsvm2",
       fs_names)
 
-    run(ditech16.test1_pt + "/train_time_slices",
+    val train_online_handler = new Handler(
+      ditech16.test1_pt + "/train_time_slices",
       test_pt + "/train_key",
       test_pt + "/train_libsvm",
       fs_names)
-
-    run(ditech16.test1_pt + "/test_time_slices",
+    val test_online_handler = new Handler(
+      ditech16.test1_pt + "/test_time_slices",
       test_pt + "/test_key",
       test_pt + "/test_libsvm",
       fs_names)
-    val feat_idx = run(ditech16.test1_pt + "/val_time_slices",
+    val val_online_handler = new Handler(
+      ditech16.test1_pt + "/val_time_slices",
       test_pt + "/val_key",
       test_pt + "/val_libsvm",
       fs_names)
 
+    threadPool.execute( train_offline_handler)
+    threadPool.execute( train_online_handler)
+    threadPool.execute( test_offline_handler)
+    threadPool.execute( val1_offline_handler)
+    threadPool.execute( val2_offline_handler)
+    threadPool.execute( test_online_handler)
+    threadPool.execute( val_online_handler)
+
+   while( val_online_handler.feat_col_num == null ){
+     threadPool.awaitTermination(10, TimeUnit.SECONDS)
+   }
     var offset = 0
-    val feature_indexs = feat_idx.map{
+    val feature_indexs = val_online_handler.feat_col_num.map{
       case (fname, num)=>
         val start = offset
         offset = offset + num
@@ -158,57 +178,59 @@ object DataPoint {
    (fs_mix.toArray,feat_idx)
 
   }
-  def run(time_slice_fp: String,
+
+  class Handler(time_slice_fp: String,
           key_fp: String,
           libsvm_fp: String,
-          fs_names: Array[String]): ArrayBuffer[(String,Int)] = {
+          fs_names: Array[String]) extends Runnable {
 
-    val time_slices = TimeSlice.load_local(time_slice_fp)
-    val dates = time_slices.map(_.date).distinct
-    val overview_dates = IO.load(ditech16.data_pt + "/overview_dates").map{
-      line =>
-        val Array(date_s,type_id) = line.split("\t")
-        (date_s,type_id.toInt)
-    }.toMap
+    var feat_col_num: collection.mutable.ArrayBuffer[(String, Int)] = null
 
-    val all_data = collection.mutable.ArrayBuffer[DataPoint]()
+    def run() {
+      val time_slices = TimeSlice.load_local(time_slice_fp)
+      val dates = time_slices.map(_.date).distinct
+      val overview_dates = IO.load(ditech16.data_pt + "/overview_dates").map {
+        line =>
+          val Array(date_s, type_id) = line.split("\t")
+          (date_s, type_id.toInt)
+      }.toMap
 
-    val key_writer = new PrintWriter(new File(key_fp))
-    val libsvm_writer = new PrintWriter(new File(libsvm_fp))
-    val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
-    val districtsType = District.loadDidTypeId(districts_fp).values.toMap
+      val all_data = collection.mutable.ArrayBuffer[DataPoint]()
 
-    var feat_idx:collection.mutable.ArrayBuffer[(String,Int)] = null
-    dates.foreach { date =>
-      val time_ids: Map[Int, Int] = time_slices.filter(_.date == date).map(x => (x.time_id, 1)).groupBy(_._1).mapValues(_.length)
+      val key_writer = new PrintWriter(new File(key_fp))
+      val libsvm_writer = new PrintWriter(new File(libsvm_fp))
+      val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
+      val districtsType = District.loadDidTypeId(districts_fp).values.toMap
 
-      val label_fp = ditech16.data_pt + s"/label/label_$date"
-      val labels = load_label(date, label_fp, time_ids)
+      dates.foreach { date =>
+        val time_ids: Map[Int, Int] = time_slices.filter(_.date == date).map(x => (x.time_id, 1)).groupBy(_._1).mapValues(_.length)
 
-      val (feats, feat_index )= loadFeatures(date, fs_names, time_ids)
-      feat_idx = feat_index
-      feats.filter{
-        case ((did,tid),feat) =>
-          //如果在overview_dates中找不到，则为part2的test数据
-          districtsType(did) == overview_dates.getOrElse( date, 2 ) || districtsType(did) == 0
-      }.flatMap {
-        case ((did, tid), feat) =>
-          val rows = time_ids.getOrElse(tid, 0)
-          Range(0, rows).map { x => (did, tid, feat) }
-      }.foreach {
-        case (did, tid, feat) =>
-          val ts_s = s"$date-${tid}"
-          key_writer.write(s"${did},$ts_s\n")
-          val gap = labels.getOrElse((did, tid), 0)
-          val fs_s = s"$gap ${feat.zipWithIndex.map(x => s"${x._2 + 1}:${x._1}").mkString(" ")}"
-          libsvm_writer.write(fs_s + "\n")
+        val label_fp = ditech16.data_pt + s"/label/label_$date"
+        val labels = load_label(date, label_fp, time_ids)
+
+        val (feats, feat_index) = loadFeatures(date, fs_names, time_ids)
+        feat_col_num = feat_index
+        feats.filter {
+          case ((did, tid), feat) =>
+            //如果在overview_dates中找不到，则为part2的test数据
+            districtsType(did) == overview_dates.getOrElse(date, 2) || districtsType(did) == 0
+        }.flatMap {
+          case ((did, tid), feat) =>
+            val rows = time_ids.getOrElse(tid, 0)
+            Range(0, rows).map { x => (did, tid, feat) }
+        }.foreach {
+          case (did, tid, feat) =>
+            val ts_s = s"$date-${tid}"
+            key_writer.write(s"${did},$ts_s\n")
+            val gap = labels.getOrElse((did, tid), 0)
+            val fs_s = s"$gap ${feat.zipWithIndex.map(x => s"${x._2 + 1}:${x._1}").mkString(" ")}"
+            libsvm_writer.write(fs_s + "\n")
+        }
+
       }
-
+      key_writer.close()
+      libsvm_writer.close()
     }
-    key_writer.close()
-    libsvm_writer.close()
-
-    feat_idx
   }
 
 
