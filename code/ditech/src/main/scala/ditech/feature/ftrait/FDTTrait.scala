@@ -60,7 +60,8 @@ trait FDTTrait {
         val feats = districts.values.toArray.sorted.flatMap { did =>
           Range(1, 145).map {
             tid =>
-              val f = stat_map.getOrElse((did,tid),(0,0,0,0,0))
+              val ktid = getTimeID(tid)
+              val f = stat_map.getOrElse((did,ktid),(0,0,0,0,0))
               s"$did,$tid\t${f._1},${f._2},${f._3},${f._4},${f._5}"
 //              val f = stat_map.getOrElse((did,tid),(0,0,0))
 //              s"$did,$tid\t${f._1},${f._2},${f._3}"
@@ -71,4 +72,7 @@ trait FDTTrait {
     }
   }
 
+  def getTimeID( tid:Int) ={
+    tid
+  }
 }
