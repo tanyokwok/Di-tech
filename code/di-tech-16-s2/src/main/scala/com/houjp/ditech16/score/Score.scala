@@ -8,9 +8,12 @@ object Score {
 
   def optionParser(): OptionParser[Params]={
     val parser = new OptionParser[Params]("Score"){
-      opt[String]("ans_pt")
-        .text(s"directory of ans")
-        .action((x,c) => c.copy( ans_pt = x ))
+      opt[String]("std_name")
+        .text(s"the name of standard answer")
+        .action((x,c) => c.copy( std_name = x ))
+      opt[String]("ans_name")
+        .text(s"the name of answer")
+        .action((x,c) => c.copy( ans_name = x ))
     }
     parser
   }
@@ -18,14 +21,12 @@ object Score {
 
     val default_params = Params()
     val parser = optionParser()
-
     parser.parse(args, default_params).map{
       params =>
-      val std_fp = params.ans_pt + s"std.csv"
-      val ans_fp = params.ans_pt + s"ans.csv"
+      val std_fp = ditech16.ans_pt + s"/${params.std_name}.csv"
+      val ans_fp = ditech16.ans_pt + s"/${params.ans_name}.csv"
 
         println(s"evaluate answer " + ans_fp)
-
       val std = Ans.load(std_fp)
       val ans = Ans.load(ans_fp)
 
@@ -69,5 +70,5 @@ object Score {
       + (score0 / district_sum_map.size).formatted("%.6f") )
   }
 
-  case class Params(ans_pt: String = "")
+  case class Params(std_name:String="std",ans_name:String="ans")
 }

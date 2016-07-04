@@ -13,7 +13,7 @@ package object ditech16 {
 
   // Windows
 
-  val project_pt = "/home/houjp/di-tech-16/"
+  val project_pt = "../"
   val data_pt = project_pt + "/data/season_2/"
   val ans_pt = project_pt + "/data/ans/"
   val cluster_pt = data_pt + "/cluster_map/"

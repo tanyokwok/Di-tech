@@ -119,7 +119,6 @@ object TimeSliceGenerator {
     }).toArray
     IO.write(offline_train_new_time_slices_fp, offline_train_new_time_slices)
 
-
   }
 
   def run_offline(nts_fp: String, offset: Int, range: Int): Unit = {

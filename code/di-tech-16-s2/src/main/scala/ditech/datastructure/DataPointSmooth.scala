@@ -11,25 +11,7 @@ import scopt.OptionParser
 
 import scala.collection.mutable.ArrayBuffer
 
-class DataPoint(val district_id: Int,
-                val time_slice: TimeSlice,
-                val gap: Double,
-                val fs: collection.mutable.ArrayBuffer[Double]) {
-
-  def get_key(): String = {
-    s"$district_id,$time_slice"
-  }
-
-  def get_libsvm(): String = {
-    s"$gap ${fs.zipWithIndex.map(e => s"${e._2 + 1}:${e._1}").mkString(" ")}"
-  }
-
-  override def toString: String = {
-    s"$district_id,$time_slice\t$gap\t${fs.mkString(",")}"
-  }
-}
-
-object DataPoint {
+object DataPointSmooth {
 
   val threadPool = Executors.newFixedThreadPool(7)
 
@@ -133,13 +115,15 @@ object DataPoint {
   }
 
 
-  def load_label(date: String, fp: String, time_ids: Map[Int,Int]): Map[(Int, Int), Double] = {
+  def load_label(date: String,time_ids: Map[Int,Int]): Map[(Int, Int), Double] = {
+    val fp = ditech16.data_pt + s"/smooth_label/label_$date"
     IO.load(fp).map { s =>
       val Array(key, gap_s) = s.split("\t")
       val Array(did_s, tid_s) = key.split(",")
       ( (did_s.toInt, tid_s.toInt), gap_s.toDouble)
     }.filter( e=> time_ids.contains( e._1._2 )).toMap
   }
+
 
   def load_local(date: String, fp: String, time_ids: Array[Int]): Array[DataPoint] = {
 
@@ -230,8 +214,10 @@ object DataPoint {
   ) extends Runnable {
 
     var feat_column_num: collection.mutable.ArrayBuffer[(String, Int)] = null
+
     def run() {
       val new_time_slices = TimeSlice.load_old(new_time_slice_fp)
+
       val dates = new_time_slices.map(_.date).distinct
       val overview_dates = IO.load(ditech16.data_pt + "/overview_dates").map {
         line =>
@@ -249,8 +235,7 @@ object DataPoint {
       dates.foreach { date =>
         val new_time_ids: Map[Int, Int] = new_time_slices.filter(_.date == date).map(x => (x.time_id, 1)).groupBy(_._1).mapValues(_.length)
 
-        val label_fp = ditech16.data_pt + s"/label/label_$date"
-        val labels = load_label(date, label_fp, new_time_ids)
+        val labels = load_label(date, new_time_ids)
 
         val (feats, feat_col_num_tmp) = loadFeatures(date, fs_names, new_time_ids)
         feat_column_num = feat_col_num_tmp
@@ -274,9 +259,7 @@ object DataPoint {
       }
       key_writer.close()
       libsvm_writer.close()
-      feat_column_num
     }
   }
-
   case class Params(features_name_pt:String="features.conf", time_slice_pt:String ="", online_out:String = "", offline_out:String="")
 }

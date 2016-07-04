@@ -1,8 +1,8 @@
-package com.houjp.ditech16.preprocess
+package ditech.preprocess
 
 import com.houjp.common.io.IO
 import com.houjp.ditech16
-import com.houjp.ditech16.datastructure.{District, OrderAbs, TimeSlice}
+import com.houjp.ditech16.datastructure.{District, TimeSlice}
 
 
 object STDAns {
@@ -12,22 +12,21 @@ object STDAns {
   }
 
   def run(data_pt: String): Unit = {
-    run_offset(data_pt, 0)
-    run_offset(data_pt, -10)
-    run_offset(data_pt, 10)
+    generate_std_ans(ditech16.ans_pt + "/test_std.csv", ditech16.offline_pt + "/test_time_slices")
+    generate_std_ans(ditech16.ans_pt + "/val_std1.csv", ditech16.offline_pt + "/val_time_slices1")
+    generate_std_ans(ditech16.ans_pt + "/val_std2.csv", ditech16.offline_pt + "/val_time_slices2")
+    generate_std_ans(ditech16.ans_pt + "/val_std.csv", ditech16.online_pt + "/val_time_slices")
   }
 
-  def run_offset(data_pt: String, offset: Int): Unit = {
+  def generate_std_ans(ans_fp:String, new_time_slices_fp: String): Unit = {
 
     // 第2赛季出现的did
-    val districts_fp = data_pt + "/cluster_map/cluster_map"
+    val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
     val districts_set = District.loadDidTypeId(districts_fp).filter(e => e._2._2 != 1).map(e => e._2._1).toSet
 
-    val ans_fp = data_pt + s"/offline/ans/std_$offset.csv"
-    val new_time_slices_fp = data_pt + s"/offline/test_new_time_slices_$offset"
     val ans = TimeSlice.load_new(new_time_slices_fp).flatMap { ts =>
       val date = f"${ts.year}%04d-${ts.month}%02d-${ts.day}%02d"
-      val label_fp = data_pt + s"/label/label_$date"
+      val label_fp = ditech16.data_pt + s"/label/label_$date"
       val label = IO.load(label_fp).map { e =>
         val Array(key, ls) = e.split("\t")
         val Array(did, ntid) = key.split(",")
