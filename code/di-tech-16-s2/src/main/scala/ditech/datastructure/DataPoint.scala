@@ -83,9 +83,10 @@ object DataPoint {
     threadPool.execute(handler_val2_offline)
     threadPool.execute(handler_val_online)
 
+    threadPool.shutdown()
 
-    while( true && handler_val_online.feat_column_num == null ){
-      threadPool.awaitTermination(20, TimeUnit.SECONDS)
+    while( true && !threadPool.awaitTermination(20, TimeUnit.SECONDS) ){
+     println("Please waiting ...")
     }
     var offset = 0
     val feature_indexs = handler_val_online.feat_column_num.map {

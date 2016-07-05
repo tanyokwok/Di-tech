@@ -5,9 +5,9 @@ import java.util.Calendar
 
 import com.houjp.common.io.IO
 import com.houjp.ditech16
-import com.houjp.ditech16.datastructure.{OrderAbs, District}
+import com.houjp.ditech16.datastructure.{District, OrderAbs}
 import ditech.common.util.Directory
-import ditech.datastructure.{Weather}
+import ditech.datastructure.Weather
 import org.saddle.Vec
 
 object FDTWeatherTimeGap {
@@ -34,20 +34,9 @@ object FDTWeatherTimeGap {
       fs.getOrElse((ntid, wid), 0.0) + 1.0
   }
 
-  val stat_map = getStatisticsByDate()
-  def getStatisticsByDate() ={
-    //load overivew dates
-    val dates_arr = IO.load(ditech16.data_pt + "/overview_dates").map{
-      line =>
-        val Array(date,type_s) = line.split("\t")
-        (date, type_s.toInt)
-    }
-
-    //collect and merge all data together by (did,tid,wid)
-    val gaps_map = collection.mutable.Map[(Int,Int), Array[Double]]()
-    dates_arr.foreach{
-     case (now_date, type_id)=>
-       val fs = collection.mutable.Map[(Int, Int), Double]()
+  class Handler(now_date:String) extends Runnable{
+    val fs = collection.mutable.Map[(Int, Int), Double]()
+    def run(): Unit ={
 
        val date_formate = new SimpleDateFormat("yyyy-MM-dd")
        val cal = Calendar.getInstance()
@@ -111,11 +100,34 @@ object FDTWeatherTimeGap {
            }
        }
 
+    }
+  }
+  val stat_map = getStatisticsByDate()
+  def getStatisticsByDate() ={
+    //load overivew dates
+    val dates_arr = IO.load(ditech16.data_pt + "/overview_dates").map{
+      line =>
+        val Array(date,type_s) = line.split("\t")
+        (date, type_s.toInt)
+    }
+
+    //collect and merge all data together by (did,tid,wid)
+    val gaps_map = collection.mutable.Map[(Int,Int), Array[Double]]()
+    val handlers = dates_arr.map{
+      case (now_date, type_id) =>
+        val handler = new Handler(now_date)
+        handler.run()
+        handler
+    }
+
+    handlers.foreach {
+      handler =>
        Range(1,ditech16.max_new_time_id + 1).foreach{
           tid =>
                Range(0,weatIdMap.size).foreach{
                  wid =>
-                 gaps_map( (tid,wid) ) = gaps_map.getOrElse((tid,wid), Array[Double]()) ++ Array(fs.getOrElse((tid,wid),0.0))
+                 gaps_map( (tid,wid) ) = gaps_map.getOrElse((tid,wid), Array[Double]()) ++
+                   Array(handler.fs.getOrElse((tid,wid),0.0))
                }
         }
 

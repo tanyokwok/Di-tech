@@ -1,5 +1,7 @@
 package ditech.feature
 
+import java.util.concurrent.{TimeUnit, Executors}
+
 import com.houjp.common.io.IO
 import com.houjp.ditech16
 import com.houjp.ditech16.datastructure.{OrderAbs, District}
@@ -25,6 +27,29 @@ object FDTWeatherDistrictGap {
     run(this.getClass.getSimpleName.replace("$",""))
   }
 
+  class Handler(
+                 date_str:String,
+                 type_id:Int
+               ) extends Runnable{
+    val fs = collection.mutable.Map[(Int, Int), Double]()
+    def run(): Unit ={
+        val weather_data_fp = ditech16.data_pt + s"/weather_data/weather_data_$date_str"
+        val weather_map = Weather.load_map(weather_data_fp)
+        val orders = OrderAbs.load_local( ditech16.data_pt + s"/order_abs_data/order_data_$date_str")
+
+        orders.foreach { ord =>
+          if (-1 != ord.start_district_id && !ord.has_driver) {
+            val tid = ord.time_id
+            val weat = weather_map.getOrElse( tid, Weather.fillWeather( weather_map, tid))
+            val wid = weatIdMap(weat.weather)
+            fs((ord.start_district_id, wid)) =
+              fs.getOrElse((ord.start_district_id, wid),0.0) + 1.0
+          }
+        }
+
+
+    }
+  }
   val stat_map = getStatisticsByDate()
   def getStatisticsByDate() ={
     //load overivew dates
@@ -36,34 +61,28 @@ object FDTWeatherDistrictGap {
 
     //collect and merge all data together by (did,tid,wid)
     val gaps_map = collection.mutable.Map[(Int,Int), Array[Double]]()
-    dates_arr.foreach{
+    val handlers = dates_arr.map{
      case (date_str, type_id)=>
-        val weather_data_fp = ditech16.data_pt + s"/weather_data/weather_data_$date_str"
-        val weather_map = Weather.load_map(weather_data_fp)
-        val orders = OrderAbs.load_local( ditech16.data_pt + s"/order_data/order_data_$date_str")
-        val fs = collection.mutable.Map[(Int, Int), Double]()
+       val handler = new Handler(date_str, type_id)
+       handler.run()
+       (handler,type_id)
+    }
 
-        orders.foreach { ord =>
-          if (-1 != ord.start_district_id && !ord.has_driver) {
-            val tid = ord.time_id
-            val weat = weather_map.getOrElse( tid, Weather.fillWeather( weather_map, tid))
-            val wid = weatIdMap(weat.weather)
-            fs((ord.start_district_id, wid)) =
-              fs.getOrElse((ord.start_district_id, wid),0.0) + 1.0
-          }
-        }
-        districtsType.values.toArray.filter{
+    handlers.foreach {
+      case (handler,type_id) =>
+        districtsType.values.toArray.filter {
           case (did, tp) =>
             tp == type_id || tp == 0
-        }.foreach{
-          case (did,tp)=>
-               Range(0,weatIdMap.size).foreach{
-                 wid =>
-                 gaps_map( (did,wid) ) = gaps_map.getOrElse((did,wid), Array[Double]()) ++ Array(fs.getOrElse((did,wid),0.0))
-               }
+        }.foreach {
+          case (did, tp) =>
+            Range(0, weatIdMap.size).foreach {
+              wid =>
+                gaps_map((did, wid)) = gaps_map.getOrElse((did, wid), Array[Double]()) ++
+                  Array(handler.fs.getOrElse((did, wid), 0.0))
+            }
         }
-
     }
+
     gaps_map.mapValues{
       fs =>
           val fs_vec = Vec(fs)
