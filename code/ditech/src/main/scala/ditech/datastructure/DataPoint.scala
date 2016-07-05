@@ -80,6 +80,7 @@ object DataPoint {
     threadPool.execute( test_online_handler)
     threadPool.execute( val_online_handler)
 
+    threadPool.shutdown()
    while( val_online_handler.feat_col_num == null ){
      threadPool.awaitTermination(10, TimeUnit.SECONDS)
    }
