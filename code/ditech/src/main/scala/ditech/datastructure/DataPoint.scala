@@ -72,11 +72,11 @@ object DataPoint {
       test_pt + "/val_libsvm",
       fs_names)
 
-    threadPool.execute( train_offline_handler)
-    threadPool.execute( train_online_handler)
-    threadPool.execute( test_offline_handler)
-    threadPool.execute( val1_offline_handler)
-    threadPool.execute( val2_offline_handler)
+//    threadPool.execute( train_offline_handler)
+//    threadPool.execute( train_online_handler)
+//    threadPool.execute( test_offline_handler)
+//    threadPool.execute( val1_offline_handler)
+//    threadPool.execute( val2_offline_handler)
     threadPool.execute( test_online_handler)
     threadPool.execute( val_online_handler)
 

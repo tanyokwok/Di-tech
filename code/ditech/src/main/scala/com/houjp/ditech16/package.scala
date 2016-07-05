@@ -30,7 +30,7 @@ package object ditech16 {
   val train_label_pt = train_pt + "/label/"
   val train_time_slices = train_pt + "/test_time_slices"
 
-  val test1_pt = data_pt + "/test_set_1/"
+  val test1_pt = data_pt + "/test_set_2/"
   val test1_time_slices = test1_pt + "/test_time_slices"
   val test1_order_pt = test1_pt + "/order_data/"
   val test1_traffic_pt = test1_pt + "/traffic_data/"

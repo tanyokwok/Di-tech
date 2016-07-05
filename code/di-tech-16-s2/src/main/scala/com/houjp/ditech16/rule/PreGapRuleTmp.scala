@@ -3,7 +3,7 @@ package com.houjp.ditech16.rule
 import com.houjp.ditech16
 import com.houjp.ditech16.datastructure.{Ans, District, Order, TimeSlice}
 import com.houjp.common.io.IO
-import ditech.feature.PreGap
+import ditech.feature_bak.PreGap
 
 object PreGapRuleTmp {
 
