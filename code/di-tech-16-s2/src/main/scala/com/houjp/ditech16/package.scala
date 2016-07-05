@@ -4,7 +4,8 @@ package object ditech16 {
 
   val is_local = true
 
-  val max_time_id = 144
+
+//  val max_time_id = 144
   val max_new_time_id = 1440
 
   // HDFS
