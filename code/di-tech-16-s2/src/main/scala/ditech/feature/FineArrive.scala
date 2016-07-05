@@ -1,4 +1,4 @@
-package com.houjp.ditech16.feature
+package ditech.feature
 
 import java.text.SimpleDateFormat
 import java.util.Calendar

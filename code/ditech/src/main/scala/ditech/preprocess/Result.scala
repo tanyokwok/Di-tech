@@ -1,5 +1,6 @@
 package ditech.preprocess
 
+import com.houjp.common.io.IO
 import com.houjp.ditech16
 import com.houjp.ditech16.datastructure.{District, OrderAbs, TimeSlice}
 import ditech.feature.PreGap
@@ -46,6 +47,8 @@ object Result {
 
       }
     }.toArray
+
+    IO.write(ans_fp, results)
   }
 
 
