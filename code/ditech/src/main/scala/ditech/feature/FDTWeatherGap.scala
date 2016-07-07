@@ -35,7 +35,7 @@ object FDTWeatherGap {
     }
 
     //collect and merge all data together by (did,tid,wid)
-    val gaps_map = collection.mutable.Map[(Int,Int,Int), Array[Double]]()
+    val gaps_map = collection.mutable.Map[(Int,Int,Int), Array[(String,Double)]]()
     dates_arr.foreach{
      case (date_str, type_id)=>
         val weather_data_fp = ditech16.data_pt + s"/weather_data/weather_data_$date_str"
@@ -61,24 +61,15 @@ object FDTWeatherGap {
               tid =>
                Range(0,weatIdMap.size).foreach{
                  wid =>
-                 gaps_map( (did,tid,wid) ) = gaps_map.getOrElse((did,tid,wid), Array[Double]()) ++ Array(fs.getOrElse((did,tid,wid),0.0))
+                 gaps_map( (did,tid,wid) ) = gaps_map.getOrElse((did,tid,wid), Array[(String,Double)]()) ++
+                   Array((date_str,fs.getOrElse((did,tid,wid),0.0)))
                }
             }
         }
 
     }
-    gaps_map.mapValues{
-      fs =>
-        if( fs.size < 5 ) (0,0)
-        else {
-          val fs_vec = Vec(fs)
-          ( fs_vec.mean,
-//            fs_vec.median,
-            fs_vec.stdev)
-//            fs_vec.min.getOrElse(0.0),
-//            fs_vec.max.getOrElse(0.0))
-        }
-    }
+
+    gaps_map
   }
   def run(feat_name:String ): Unit ={
   dates.foreach{
@@ -95,8 +86,20 @@ object FDTWeatherGap {
             tid =>
               val weat = weather_map.getOrElse(tid, Weather.fillWeather(weather_map, tid ))
               val wid = weatIdMap( weat.weather )
-              val f = stat_map.getOrElse((did,tid, wid),(0,0))
-              s"$did,$tid\t${f._1},${f._2}"
+              val smp_arr = stat_map.getOrElse((did,tid,wid), Array[(String,Double)]())
+                .filter( _._1 != date).map( _._2)
+
+              val f = if( smp_arr.length == 0 ){
+                (0.0,0.0,0.0,0.0,0.0)
+              }else {
+                val fs_vec = Vec(smp_arr)
+                (fs_vec.mean,
+                  fs_vec.median,
+                  fs_vec.stdev,
+                  fs_vec.min.getOrElse(0.0),
+                  fs_vec.max.getOrElse(0.0))
+              }
+              s"$did,$tid\t${f._1},${f._2},${f._3},${f._4},${f._5}"
           }
         }
 

@@ -22,7 +22,7 @@ trait FDTTrait {
         (date, type_s.toInt)
     }
 
-    val gaps_map = collection.mutable.Map[(Int,Int), Array[Double]]()
+    val gaps_map = collection.mutable.Map[(Int,Int), Array[(String,Double)]]()
     dates_arr.foreach{
      case (date_str, type_id)=>
         val orders = OrderAbs.load_local( ditech16.data_pt + s"/order_data/order_data_$date_str",districts )
@@ -36,16 +36,28 @@ trait FDTTrait {
           case (did,tp)=>
             Range(1,ditech16.max_time_id + 1  ).foreach{
               tid =>
-                gaps_map( (did,tid) ) = gaps_map.getOrElse((did,tid), Array[Double]()) ++ Array(fs.getOrElse((did,tid),0.0))
+                gaps_map( (did,tid) ) = gaps_map.getOrElse((did,tid), Array[(String,Double)]()) ++
+                  Array((date_str,fs.getOrElse((did,tid),0.0)))
             }
         }
 
     }
-    gaps_map.mapValues{
-      fs =>
-        val fs_vec = Vec( fs )
-        (fs_vec.mean, fs_vec.median, fs_vec.stdev,fs_vec.min.getOrElse(0.0), fs_vec.max.getOrElse(0.0))
-//        (fs_vec.mean, fs_vec.median, fs_vec.stdev )
+    gaps_map
+//    gaps_map.mapValues{
+//      fs =>
+//        val fs_vec = Vec( fs )
+//        (fs_vec.mean, fs_vec.median, fs_vec.stdev,fs_vec.min.getOrElse(0.0), fs_vec.max.getOrElse(0.0))
+////        (fs_vec.mean, fs_vec.median, fs_vec.stdev )
+//    }
+  }
+
+  def getFeat(date:String, did:Int, ktid:Int )= {
+    val smp_arr = stat_map.getOrElse((did, ktid), Array[(String, Double)]())
+      .filter(_._1 != date).map(_._2)
+    if( smp_arr.length == 0 ) (0.0,0.0,0.0,0.0,0.0)
+    else {
+      val fs_vec = Vec(smp_arr)
+      (fs_vec.mean, fs_vec.median, fs_vec.stdev, fs_vec.min.getOrElse(0.0), fs_vec.max.getOrElse(0.0))
     }
   }
   def run( data_pt:String, feat_name:String ): Unit ={
@@ -61,10 +73,9 @@ trait FDTTrait {
           Range(1, 145).map {
             tid =>
               val ktid = getTimeID(tid)
-              val f = stat_map.getOrElse((did,ktid),(0,0,0,0,0))
+
+              val f = getFeat(date, did, ktid)
               s"$did,$tid\t${f._1},${f._2},${f._3},${f._4},${f._5}"
-//              val f = stat_map.getOrElse((did,tid),(0,0,0))
-//              s"$did,$tid\t${f._1},${f._2},${f._3}"
           }
         }
 

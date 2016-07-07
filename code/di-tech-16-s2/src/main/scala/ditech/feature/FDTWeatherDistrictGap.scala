@@ -1,10 +1,8 @@
 package ditech.feature
 
-import java.util.concurrent.{TimeUnit, Executors}
-
 import com.houjp.common.io.IO
 import com.houjp.ditech16
-import com.houjp.ditech16.datastructure.{OrderAbs, District}
+import com.houjp.ditech16.datastructure.{District, OrderAbs}
 import ditech.common.util.Directory
 import ditech.datastructure.Weather
 import org.saddle.Vec
@@ -39,7 +37,7 @@ object FDTWeatherDistrictGap {
 
         orders.foreach { ord =>
           if (-1 != ord.start_district_id && !ord.has_driver) {
-            val tid = ord.time_id
+            val tid = ord.new_time_id
             val weat = weather_map.getOrElse( tid, Weather.fillWeather( weather_map, tid))
             val wid = weatIdMap(weat.weather)
             fs((ord.start_district_id, wid)) =
@@ -112,7 +110,6 @@ object FDTWeatherDistrictGap {
               s"$did,$tid\t${f._1},${f._2},${f._3},${f._4},${f._5}"
           }
         }
-
         IO.write(feat_fp, feats )
     }
   }

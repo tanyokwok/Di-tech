@@ -11,27 +11,10 @@ import scopt.OptionParser
 
 import scala.collection.mutable
 
-class DataPoint(val district_id: Int,
-                val time_slice: TimeSlice,
-                val gap: Double,
-                val fs: collection.mutable.ArrayBuffer[Double]) {
 
-  def get_key(): String = {
-    s"$district_id,$time_slice"
-  }
+object DataPointTrain {
 
-  def get_libsvm(): String = {
-    s"$gap ${fs.zipWithIndex.map(e => s"${e._2 + 1}:${e._1}").mkString(" ")}"
-  }
-
-  override def toString: String = {
-    s"$district_id,$time_slice\t$gap\t${fs.mkString(",")}"
-  }
-}
-
-object DataPoint {
-
-  val threadPool = Executors.newFixedThreadPool(7)
+  val threadPool = Executors.newFixedThreadPool(2)
   def run(fs_names:Array[String], train_pt:String, test_pt:String): Unit ={
 
     val train_offline_handler = new Handler(
@@ -45,47 +28,22 @@ object DataPoint {
       train_pt + "/test_key",
       train_pt + "/test_libsvm",
       fs_names)
-    val val1_offline_handler = new Handler(
-      ditech16.train_pt + "/val_time_slices1",
-      train_pt + "/val_key1",
-      train_pt + "/val_libsvm1",
-      fs_names)
-    val val2_offline_handler = new Handler(
-        ditech16.train_pt + "/val_time_slices2",
-      train_pt + "/val_key2",
-      train_pt + "/val_libsvm2",
-      fs_names)
 
     val train_online_handler = new Handler(
       ditech16.test1_pt + "/train_time_slices",
       test_pt + "/train_key",
       test_pt + "/train_libsvm",
       fs_names)
-    val test_online_handler = new Handler(
-      ditech16.test1_pt + "/test_time_slices",
-      test_pt + "/test_key",
-      test_pt + "/test_libsvm",
-      fs_names)
-    val val_online_handler = new Handler(
-      ditech16.test1_pt + "/val_time_slices",
-      test_pt + "/val_key",
-      test_pt + "/val_libsvm",
-      fs_names)
 
     threadPool.execute( train_offline_handler)
     threadPool.execute( train_online_handler)
-    threadPool.execute( test_offline_handler)
-    threadPool.execute( val1_offline_handler)
-    threadPool.execute( val2_offline_handler)
-    threadPool.execute( test_online_handler)
-    threadPool.execute( val_online_handler)
 
     threadPool.shutdown()
-   while( !threadPool.awaitTermination(10, TimeUnit.SECONDS) ){
+   while( !threadPool.awaitTermination(30, TimeUnit.SECONDS) ){
      println("Please waiting...")
    }
     var offset = 0
-    val feature_indexs = val_online_handler.feat_col_num.map{
+    val feature_indexs = train_online_handler.feat_col_num.map{
       case (fname, num)=>
         val start = offset
         offset = offset + num

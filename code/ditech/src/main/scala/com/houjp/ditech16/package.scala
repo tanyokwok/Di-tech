@@ -12,7 +12,8 @@ package object ditech16 {
 
   // Windows
 //  val project_pt = "/home/gty/ditech/"
-  val project_pt = "../"
+  println("Please input the project path:")
+  val project_pt = Console.readLine()
 //  val project_pt = "E:/Di-tech/"
 //  val data_pt = project_pt + "/data/"
   val data_pt = project_pt + "/data/raw/"
