@@ -4,10 +4,10 @@ import com.houjp.common.io.IO
 import com.houjp.ditech16
 import com.houjp.ditech16.datastructure.District
 import ditech.common.util.Directory
-import ditech.datastructure.{Weather, OrderAbs}
+import ditech.datastructure.{OrderAbs, Weather}
 import org.saddle.Vec
 
-object FDTWeatherGap {
+object FDTWeatherTimeGapNew {
 
   val districts_fp = ditech16.data_pt + "/cluster_map/cluster_map"
   val districtsType = District.loadDidTypeId(districts_fp)
@@ -35,36 +35,30 @@ object FDTWeatherGap {
     }
 
     //collect and merge all data together by (did,tid,wid)
-    val gaps_map = collection.mutable.Map[(Int,Int,Int), Array[(String,Double)]]()
+    val gaps_map = collection.mutable.Map[(Int,Int), Array[(String,Double)]]()
     dates_arr.foreach{
      case (date_str, type_id)=>
         val weather_data_fp = ditech16.data_pt + s"/weather_data/weather_data_$date_str"
         val weather_map = Weather.load_map(weather_data_fp)
         val orders = OrderAbs.load_local( ditech16.data_pt + s"/order_data/order_data_$date_str",districts )
-        val fs = collection.mutable.Map[(Int,Int, Int), Double]()
+        val fs = collection.mutable.Map[(Int, Int), Double]()
 
         orders.foreach { ord =>
           if (-1 != ord.start_district_id && !ord.has_driver) {
             val tid = ord.time_id
             val weat = weather_map.getOrElse( tid, Weather.fillWeather( weather_map, tid))
             val wid = weatIdMap(weat.weather)
-            fs((ord.start_district_id, tid, wid)) =
-              fs.getOrElse((ord.start_district_id, tid, wid),0.0) + 1.0
+            fs((tid, wid)) =
+              fs.getOrElse((tid, wid),0.0) + 1.0
           }
         }
-        districtsType.values.toArray.filter{
-          case (did, tp) =>
-            tp == type_id || tp == 0
-        }.foreach{
-          case (did,tp)=>
-            Range(1,ditech16.max_time_id + 1  ).foreach{
-              tid =>
+        Range(1,ditech16.max_time_id + 1).foreach{
+          tid =>
                Range(0,weatIdMap.size).foreach{
                  wid =>
-                 gaps_map( (did,tid,wid) ) = gaps_map.getOrElse((did,tid,wid), Array[(String,Double)]()) ++
-                   Array((date_str,fs.getOrElse((did,tid,wid),0.0)))
+                 gaps_map( (tid,wid) ) = gaps_map.getOrElse((tid,wid), Array[(String,Double)]()) ++
+                   Array((date_str, fs.getOrElse((tid,wid),0.0)))
                }
-            }
         }
 
     }
@@ -72,8 +66,9 @@ object FDTWeatherGap {
     gaps_map
   }
 
-  def getFeat(date:String, did:Int, tid:Int, wid:Int )= {
-    val smp_arr = stat_map.getOrElse((did, tid, wid), Array[(String, Double)]())
+
+  def getFeat(date:String, tid:Int, wid:Int )= {
+    val smp_arr = stat_map.getOrElse((tid, wid), Array[(String, Double)]())
       .filter(_._1 != date).map(_._2)
 
     val f = if (smp_arr.length == 0) {
@@ -104,8 +99,7 @@ object FDTWeatherGap {
             tid =>
               val weat = weather_map.getOrElse(tid, Weather.fillWeather(weather_map, tid ))
               val wid = weatIdMap( weat.weather )
-
-              val f = getFeat(date, did, tid, wid)
+              val f = getFeat(date, tid, wid)//stat_map.getOrElse((tid, wid),(0,0,0,0,0))
               s"$did,$tid\t${f._1},${f._2},${f._3},${f._4},${f._5}"
           }
         }
