@@ -22,6 +22,7 @@ object POI {
     new POI("",vec)
   }
   val keyMap = collection.mutable.Map[String,Int]()
+
   def parse(line:String):(String,Map[Int,Int])={
     val arr = line.split("\t")
     val district_id = arr(0)
