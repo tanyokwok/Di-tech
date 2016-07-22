@@ -72,15 +72,12 @@ object FTrafficJamRate {
         val did = group._1._1
         var tid = ( group._1._2 + t_len ) % 144
         if( tid == 0 ) tid = 144
-
-
         val traffic_level: (Double, Double, Double, Double) = group._2.map{ e =>
            (e.level1.toDouble, e.level2.toDouble, e.level3.toDouble, e.level4.toDouble)
         }.reduce{
           (x,y) =>
             (x._1 + y._1, x._2 + y._2 , x._3 + y._3, x._4 + y._4)
         }
-
         if( tid == 54 && did == 51  ) println( s"sum: ${traffic_level}" )
         val len = group._2.length
         val level =  ( traffic_level._1 / len,
